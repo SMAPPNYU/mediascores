@@ -30,6 +30,9 @@ vignettes/*_cache/
 *.o
 *.so
 *.a
+# Stan files created by make_cc
+*.cc
+*.hpp
 # Development note
 devel_notes.md
 # Generated test data

@@ -1,8 +1,8 @@
 data {
-  int N; 
+  int n; 
   int k; 
-  real y[N]; 
-  matrix[N,k] X; 
+  real y[n]; 
+  matrix[n,k] X; 
 }
 parameters {
   vector[k] beta; 
