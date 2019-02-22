@@ -12,9 +12,9 @@ library(MASS)
 library(invgamma)
 
 ##### SET WORKING DIRECTORY (IF ON PERSONAL COMPUTER OR HPC)
-if(grepl("gregoryeady", system("whoami", intern = TRUE))) {
+if (grepl("gregoryeady", system("whoami", intern = TRUE))) {
   setwd("/Users/GregoryEady/GitHub/mediascores")
-} else if(grepl("ge31", system("whoami", intern = TRUE))) {
+} else if (grepl("ge31", system("whoami", intern = TRUE))) {
   setwd("/scratch/ge31/GitHub/mediascores")
 }
 
@@ -95,17 +95,10 @@ model_media_scores <- stan_model(file = "src/stan_files/mediascores.stan")
 # N = number of users; M = number of domains; G = number of groups;
 # group = group each user belongs to; Y = user-domain count matrix
 model_data <- list(N = nrow(Y), M = ncol(Y), G = length(unique(group)),
-                   group = group, Y = Y)
+                   group = group, Y = Y, anchors = anchors)
 
-# Fit the model
-posterior <- sampling(model_media_scores, data = model_data,
-                             warmup = 750, iter = 1500,
-                             refresh = 50, chains = n_cores,
-                             open_progress = TRUE)
 
-posterior <- vb(model_media_scores, data = model_data,
-                       output_samples = 5000, tol_rel_obj = 0.001,
-                       algorithm = "meanfield")
+posterior <- mediascores(Y, group, anchors, "meanfield")
 
 
 plot(alpha, sapply(extract(posterior, paste0("alpha[", 1:n_users, "]")), median)); abline(0, 1)

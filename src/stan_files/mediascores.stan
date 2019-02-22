@@ -30,6 +30,7 @@ data {
   int G;
   int group[N];
   int Y[N, M];
+  int anchors[2];
 
 }
 
@@ -129,9 +130,9 @@ model {
 generated quantities {
 
   // Fix reflection invariance
-  vector[M] zeta = zeta_unconstrained[1] < zeta_unconstrained[2] ? zeta_unconstrained : zeta_unconstrained * -1;
-  vector[N] theta = zeta_unconstrained[1] < zeta_unconstrained[2] ? theta_unconstrained : theta_unconstrained * -1;
-  vector[G] theta_mu = zeta_unconstrained[1] < zeta_unconstrained[2] ? theta_mu_unconstrained : theta_mu_unconstrained * -1;
+  vector[M] zeta = zeta_unconstrained[anchors[1]] < zeta_unconstrained[anchors[2]] ? zeta_unconstrained : zeta_unconstrained * -1;
+  vector[N] theta = zeta_unconstrained[anchors[1]] < zeta_unconstrained[anchors[2]] ? theta_unconstrained : theta_unconstrained * -1;
+  vector[G] theta_mu = zeta_unconstrained[anchors[1]] < zeta_unconstrained[anchors[2]] ? theta_mu_unconstrained : theta_mu_unconstrained * -1;
 
 
 }
