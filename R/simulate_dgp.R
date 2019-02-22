@@ -103,9 +103,9 @@ posterior <- sampling(model_media_scores, data = model_data,
                              refresh = 50, chains = n_cores,
                              open_progress = TRUE)
 
-# posterior <- vb(model_media_scores, data = model_data,
-#                        output_samples = 5000, tol_rel_obj = 0.001,
-#                        algorithm = "meanfield")
+posterior <- vb(model_media_scores, data = model_data,
+                       output_samples = 5000, tol_rel_obj = 0.001,
+                       algorithm = "meanfield")
 
 
 plot(alpha, sapply(extract(posterior, paste0("alpha[", 1:n_users, "]")), median)); abline(0, 1)

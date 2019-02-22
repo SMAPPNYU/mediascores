@@ -25,7 +25,6 @@ functions {
 
 data {
 
-  int verbose;
   int N;
   int M;
   int G;
