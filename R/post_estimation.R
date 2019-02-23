@@ -1,4 +1,5 @@
-#' Simulate data according to the media score model's data generating process
+#' Provide a point estimate for each parameter of interest and its
+#' credible interval
 #' 
 #' [TODO: EXTENDED HEADER]
 #' 
@@ -7,10 +8,14 @@
 #' @param n_user, int, number of users in the data
 #'     
 #' @return
-#' Returns a list with elements:
+#' Returns a three-columm matrix containing the median of the posterior of each
+#' paramter of interest and a credible interval
 #' 
 #' @examples
-#' simulated_data <- simulate_data() 
+#' simulated_data <- simulate_data()
+#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+#'                           algorithm = "meanfield")
+#' point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
 #' 
 #' @export
 point_est <- function(object, pars = c("theta", "theta_mu", "theta_sigma",
@@ -29,7 +34,7 @@ point_est <- function(object, pars = c("theta", "theta_mu", "theta_sigma",
   X <- as.matrix(object)[, keep_pars]
   alpha <- (1 - prob) / 2
   probs <- c(alpha, 1 - alpha)
-  labels <- paste0(100 * c(0.5, probs), "%")
+  labels <- c("median", paste0(100 * probs, "%"))
   out <- t(apply(X, 2, quantile, probs = c(0.5, probs)))
   structure(out, dimnames = list(colnames(X), labels))
 }
