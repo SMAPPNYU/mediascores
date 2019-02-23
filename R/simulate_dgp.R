@@ -35,10 +35,10 @@
 #' }
 #' 
 #' @examples
-#' simulated_data = simulate_data() 
+#' simulated_data <- simulate_data() 
 #' 
 #' @export
-simulate_data <- function(n_user = 200, 
+simulate_data <- function(n_users = 200, 
                           n_domains = 500, 
                           n_groups = 2, 
                           group_prob = c(0.4, 0.6),
@@ -54,17 +54,17 @@ simulate_data <- function(n_user = 200,
     # Draw group membership of each user
     group <- sample(1:n_groups, n_users, replace = TRUE, prob = group_prob)
     
-    # draw user-level intercept
+    # Draw user-level intercept
     alpha <- rnorm(n_users, mean = params$alpha_mu, sd = params$alpha_sigma)
     
-    # draw domain-level intercept
+    # Draw domain-level intercept
     gamma <- rnorm(n_domains, mean = 0, sd = params$gamma_sigma)
     
-    # draw ideology of each user conditional on group membership
+    # Draw ideology of each user conditional on group membership
     theta = rnorm(n = n_users, mean = params$theta_mu[group], 
                   sd = params$theta_sigma[group])
     
-    # draw ideology of each news domain
+    # Draw ideology of each news domain
     zeta <- rnorm(n_domains, mean = 0, sd = 1)
     
     # To define the polarization of the scale, for simulation, we'll define the 
