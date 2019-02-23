@@ -27,10 +27,11 @@ paramter of interest and a credible interval
 [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
 }
 \examples{
+\dontrun{
 simulated_data <- simulate_data()
-posterior <- mediascores(simulated_data$Y, simulated_data$group, 
-                         simulated_data$anchors, variational = TRUE,
-                         chains = 1)
+posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
+                         anchors = simulated_data$anchors, 
+                         variational = TRUE)
 point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
-
+}
 }

@@ -14,12 +14,13 @@
 #' paramter of interest and a credible interval
 #' 
 #' @examples
+#' \dontrun{
 #' simulated_data <- simulate_data()
-#' posterior <- mediascores(simulated_data$Y, simulated_data$group, 
-#'                          simulated_data$anchors, variational = TRUE,
-#'                          chains = 1)
+#' posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
+#'                          anchors = simulated_data$anchors, 
+#'                          variational = TRUE)
 #' point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
-#' 
+#' }
 #' @export
 point_est <- function(posterior, 
                       pars = c("theta", "theta_mu", "theta_sigma", "zeta",
@@ -35,7 +36,7 @@ point_est <- function(posterior,
       grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE)
   }))
 
-  X <- as.matrix(object)[, keep_pars]
+  X <- as.matrix(posterior)[, keep_pars]
   alpha <- (1 - prob) / 2
   probs <- c(alpha, 1 - alpha)
   labels <- c("median", paste0(100 * probs, "%"))

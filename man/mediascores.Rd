@@ -39,7 +39,9 @@ representing the fitted results.
 [TODO: FILL IN MODEL DETAILS HERE]
 }
 \examples{
+\dontrun{
 sim_data <- simulate_data(200, 500)
 posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
-                          algorithm = "meanfield")
+                         variational = FALSE, chains = 2)
+}
 }

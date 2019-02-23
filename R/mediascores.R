@@ -24,9 +24,11 @@
 #' representing the fitted results.
 #' 
 #' @examples
+#' \dontrun{
 #' sim_data <- simulate_data(200, 500)
 #' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
-#'                           algorithm = "meanfield")
+#'                          variational = FALSE, chains = 2)
+#' }
 #' @export
 mediascores <- function(Y, group = NULL, anchors, variational = FALSE,
                         adapt_delta = 0.8, ...) {
@@ -49,6 +51,7 @@ mediascores <- function(Y, group = NULL, anchors, variational = FALSE,
   if (variational) {
     posterior <- rstan::vb(stanmodels$mediascores, data = model_data, ...)
   } else {
+      print('HEY')
     posterior <- rstan::sampling(stanmodels$mediascores, data = model_data, ...)
   }
 
