@@ -21,7 +21,7 @@ if (grepl("gregoryeady", system("whoami", intern = TRUE))) {
 n_cores <- 4
 options(mc.cores = n_cores)
 
-n_users <- 200
+n_users <- 2000
 n_domains <- 500
 
 # Group that users might belong to (e.g. Republican, Democrat, ordinary user)
@@ -119,7 +119,9 @@ mean(theta > sapply(extract(posterior, paste0("theta[", 1:n_users, "]")), functi
      theta < sapply(extract(posterior, paste0("theta[", 1:n_users, "]")), function(x) quantile(x, 0.95)))
 mean(zeta > sapply(extract(posterior, paste0("zeta[", 1:n_domains, "]")), function(x) quantile(x, 0.05)) &
      zeta < sapply(extract(posterior, paste0("zeta[", 1:n_domains, "]")), function(x) quantile(x, 0.95)))
-mean(omega > sapply(extract(posterior, paste0("omega[", 1:n_users, "]")), function(x) quantile(x, 0.05)) &
-     omega < sapply(extract(posterior, paste0("omega[", 1:n_users, "]")), function(x) quantile(x, 0.95)))
+mean(omega_user > sapply(extract(posterior, paste0("omega_user[", 1:n_users, "]")), function(x) quantile(x, 0.05)) &
+     omega_user < sapply(extract(posterior, paste0("omega_user[", 1:n_users, "]")), function(x) quantile(x, 0.95)))
+mean(omega_domain > sapply(extract(posterior, paste0("omega_domain[", 1:n_domains, "]")), function(x) quantile(x, 0.05)) &
+     omega_domain < sapply(extract(posterior, paste0("omega_domain[", 1:n_domains, "]")), function(x) quantile(x, 0.95)))
 
 

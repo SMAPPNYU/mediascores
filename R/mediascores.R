@@ -1,7 +1,7 @@
 mediascores <- function(Y, group = NULL, anchors,
                         algorithm = c("sampling", "meanfield"),
                         adapt_delta = 0.8,
-                        warmup = 1000, iter = 2000,
+                        warmup = 750, iter = 1500,
                         chains = 4, refresh = 50) {
 
   algorithm <- match.arg(algorithm)
