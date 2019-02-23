@@ -80,9 +80,9 @@ simulate_data <- function(n_users = 200,
     # Compute the values of the user-domain count matrix: the count of each domain
     # shared by each user
     shares_data = do.call(rbind, lapply(1:n_users, function(i) {
-       rnegbin(n = n_domains, 
-               mu = exp(alpha[i] + gamma - ((theta[i] - zeta)^2)), 
-               theta = omega_user[i]*omega_domain)
+       MASS::rnegbin(n = n_domains, 
+                     mu = exp(alpha[i] + gamma - ((theta[i] - zeta)^2)), 
+                     theta = omega_user[i]*omega_domain)
     })) 
     
     return(list("shares_data" = shares_data, "group" = group, 
