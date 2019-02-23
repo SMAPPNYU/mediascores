@@ -91,7 +91,6 @@ simulate_data <- function(n_user = 200,
                                     'theta' = theta, 'zeta' = zeta)))
 }
 
-<<<<<<< HEAD
 ### This will go into vignette:
 
 #library(rstan)
