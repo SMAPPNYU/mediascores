@@ -136,7 +136,7 @@ set.seed(121)
 
 <h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news media ideology with news sharing behavior on social media</h1>
 <h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) package in R</h2>
-<h5 style = "margin-top: 30px; font-weight: 300">**Author 1** and **Author 2** and **Author 3** ... (February 23, 2019)</h5>
+<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[`Author 1`](https://google.com)** and **[`Author 2`](https://google.com)** and **[`Author 3`](https://google.com)** ...</h5>
 <hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
 
 
