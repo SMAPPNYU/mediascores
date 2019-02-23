@@ -72,9 +72,9 @@ simulate_data <- function(n_users = 200,
     anchors <- c(which.min(zeta), which.max(zeta))
     
     # omega_user and omega_domain represent the variance of the model
-    omega_user <- rinvgamma(n_users, params$omega_user_shape, 
+    omega_user <- invgamma::rinvgamma(n_users, params$omega_user_shape, 
                             params$omega_user_rate)
-    omega_domain <- rinvgamma(n_domains, params$omega_domain_shape, 
+    omega_domain <- invgamma::rinvgamma(n_domains, params$omega_domain_shape, 
                             params$omega_domain_rate)
     
     # Compute the values of the user-domain count matrix: the count of each domain
