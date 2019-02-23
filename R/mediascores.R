@@ -51,7 +51,6 @@ mediascores <- function(Y, group = NULL, anchors, variational = FALSE,
   if (variational) {
     posterior <- rstan::vb(stanmodels$mediascores, data = model_data, ...)
   } else {
-      print('HEY')
     posterior <- rstan::sampling(stanmodels$mediascores, data = model_data, ...)
   }
 
