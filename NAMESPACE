@@ -2,6 +2,7 @@
 
 export(blm)
 export(lm_stan)
+export(simulate_data)
 import(Rcpp)
 import(methods)
 import(rstantools)

@@ -1,3 +1,9 @@
+#' Estimate the mediascores model
+#' 
+#' @examples
+#' sim_data <- simulate_data(200, 500)
+#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+#'                           algorithm = "meanfield")
 mediascores <- function(Y, group = NULL, anchors,
                         algorithm = c("sampling", "meanfield"),
                         adapt_delta = 0.8,
@@ -21,12 +27,13 @@ mediascores <- function(Y, group = NULL, anchors,
                      group = group, Y = Y, anchors = anchors)
 
   if (algorithm == "sampling") {
-    posterior <- sampling(model_media_scores, data = model_data,
-                          warmup = warmup, iter = iter,
-                          refresh = 50, chains = chains,
-                          open_progress = TRUE)
+    posterior <- rstan::sampling(stanmodels$mediascores, 
+                                 data = model_data,
+                                 warmup = warmup, iter = iter,
+                                 refresh = 50, chains = chains,
+                                 open_progress = TRUE)
   } else if (algorithm == "meanfield") {
-    posterior <- vb(model_media_scores, data = model_data,
+    posterior <- rstan::vb(stanmodels$mediascores, data = model_data,
                            output_samples = 5000, tol_rel_obj = 0.001,
                            algorithm = "meanfield")
   }
