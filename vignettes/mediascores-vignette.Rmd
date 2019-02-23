@@ -1,0 +1,175 @@
+---
+date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+    theme: default
+    highlight: default
+bibliography: "Bibliography.bib"
+biblio-style: apsr
+comment: ""
+vignette: >
+  %\VignetteIndexEntry{mediascores Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+---
+
+<!--- 
+rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
+-->
+
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,900' rel='stylesheet' type='text/css'>
+
+<script type="text/x-mathjax-config"> 
+    MathJax.Hub.Config({ 
+        "HTML-CSS": { scale: 91, linebreaks: { automatic: true } }, 
+        SVG: { linebreaks: { automatic:true } }, 
+        displayAlign: "center" });
+</script>
+
+<style>
+  @media {
+    .container-fluid{
+      max-width: 750px;
+    }
+  }
+
+  body {
+    background: #F6F6F6;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+  }
+
+  mark {
+    background-color: #E9E9E9;
+    color: #000000;
+  }
+
+  pre {
+    background-color: #FFFFFF;
+    border-radius: 0px;
+    border-width: 1px;
+    border-style: dotted;
+    border-color: #3B3B3B;
+
+  }
+
+  p {
+    padding-top: 10px;
+  }
+
+  .container-fluid h1,
+  .container-fluid h2,
+  .container-fluid h3,
+  .container-fluid h4{
+    color:#000000;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .container-fluid h1{
+    text-align: left;
+    letter-spacing: 1px;
+    font-weight: 900;
+    font-size: 30px;
+    padding-top:10px;
+    padding-bottom:5px;
+  }
+
+  .container-fluid h2{
+    text-align: left;
+    letter-spacing: 1px;
+    font-weight: 900;
+    font-size: 20px;
+    padding-bottom:5px;
+  }
+
+  blockquote {
+    border-left: 0px solid;
+    padding-left: 40px;
+    padding-top: 14px;
+    padding-bottom: 18px;
+    padding-right: 40px;
+    background-color: #F6F6F6;
+    border-top: 0px;
+    border-bottom: 0px;
+    margin: 0px;
+    background-position: middle left;
+    background-repeat: no-repeat;
+    text-indent: 0px;
+    font-size: 16px;
+    letter-spacing: 0px;
+    /*line-height: 22px;*/
+    font-family: 'Lato', sans-serif;
+  }
+
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
+    color: #006400;
+  }
+
+  hr {
+    width: 100%;
+    margin-left: 0; 
+    margin-right: auto; 
+    height: 0px;
+    border: 1px;
+    color: #006400;
+    border-top: dotted 1px;
+  }
+
+</style>
+
+
+```{r set-options, include = FALSE}
+options(width = 10000)
+knitr::opts_chunk$set(comment = "")
+set.seed(121)
+```
+
+<!-- BEGIN DOCUMENT -->
+
+<h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news media ideology with news sharing behavior on social media</h1>
+<h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) package in R</h2>
+<h5 style = "margin-top: 30px; font-weight: 300">**Gregory Eady** and **Frido Linder** (February 23, 2019)</h5>
+<hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
+
+
+# 1. Introduction {#section1}
+
+This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores). The package implements .... In brief, the goal of the method is to model 
+
+# 2. Covariates {#section2}
+
+Before turning to the data-generating process
+
+To begin, let's say that we have $10000$ respondents $i = 1, \ldots, 10000$ in a data.frame `A`:
+
+```{r}
+n <- 10000
+A <- data.frame(i = 1:n)
+```
+
+For concreteness, we will generate respondent characteristics that we will say represent age, gender, and education:
+
+```{r}
+A$age <- round(runif(n, 18, 90))
+A$gender <- sample(c("Woman", "Man"), n, replace = TRUE, prob = c(0.52, 0.48))
+A$education <- sample(c("Below high school",
+                        "High school",
+                        "College"),
+                      n, replace = TRUE, prob = c(0.25, 0.35, 0.4))
+A$education <- factor(A$education, levels = c("Below high school",
+                                              "High school",
+                                              "College"))
+```
+
+
+# References
+<hr style = "margin-bottom: 22px; margin-top: 12px; border:1px; border-top: dotted 1px; color:#006400">
+
