@@ -4,12 +4,35 @@
 \alias{mediascores}
 \title{Estimate the mediascores model}
 \usage{
-mediascores(Y, group = NULL, anchors, algorithm = c("sampling",
-  "meanfield"), adapt_delta = 0.8, warmup = 1000, iter = 2000,
-  chains = 4, refresh = 50)
+mediascores(Y, group = NULL, anchors, variational = FALSE,
+  adapt_delta = 0.8)
+}
+\arguments{
+\item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
+counts of how often each user (row) shared a given domain (column). No 
+missing data is permitted.}
+
+\item{group}{vector of length \code{n_users} indicating group membership of 
+each user. If \code{NULL} every user is assigned to the same group.}
+
+\item{anchors}{vector of length 2 indicating index/column position of the 
+anchor domains}
+
+\item{variational}{logical, should variational inference be used 
+(\code{\link[rstan]{rstan::vb}}). If set to \code{FALSE} exact sampling 
+(\code{\link[rstan]{rstan::sampling}}) is used.}
+
+\item{adapt_delta}{[TODO: FILL IN]}
+
+\item{...}{arguments passed to \code{\link[rstan]{rstan::sampling}}
+(for \code{variational = TRUE}) or \code{\link[rstan]{rstan::vb}} 
+(for \code{variational = FALSE})}
 }
 \description{
-Estimate the mediascores model
+[TODO: EXTENDED HEADER FILL IN]
+}
+\details{
+[TODO: FILL IN MODEL DETAILS HERE]
 }
 \examples{
 sim_data <- simulate_data(200, 500)
