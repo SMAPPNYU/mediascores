@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "first.last@example.com")
 Description: What the package does (one paragraph).
-License: GPL (>=3)
+License: MIT + file LICENSE
 Depends: 
     methods,
     R (>= 3.4.0),
