@@ -3,7 +3,6 @@
 \docType{package}
 \name{mediascores-package}
 \alias{mediascores-package}
-\alias{mediascores}
 \title{The 'mediascores' package.}
 \description{
 A DESCRIPTION OF THE PACKAGE

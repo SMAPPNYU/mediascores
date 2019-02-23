@@ -11,6 +11,8 @@ simulate_data(n_users = 200, n_domains = 500, n_groups = 2,
   omega_domain_rate = 5))
 }
 \arguments{
+\item{n_users, }{int, number of users in the data}
+
 \item{n_domains, }{int, number of domains that users can share}
 
 \item{n_groups, }{int, number of groups users can belong to}
@@ -20,8 +22,6 @@ probability of a user belonging to each of the groups}
 
 \item{params, }{list containing parameters of the model distributions. See 
 Details section for more information [FILL IN]}
-
-\item{n_user, }{int, number of users in the data}
 }
 \value{
 Returns a list with elements:

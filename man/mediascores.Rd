@@ -5,7 +5,7 @@
 \title{Estimate the mediascores model}
 \usage{
 mediascores(Y, group = NULL, anchors, variational = FALSE,
-  adapt_delta = 0.8)
+  adapt_delta = 0.8, ...)
 }
 \arguments{
 \item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
@@ -19,14 +19,18 @@ each user. If \code{NULL} every user is assigned to the same group.}
 anchor domains}
 
 \item{variational}{logical, should variational inference be used 
-(\code{\link[rstan]{rstan::vb}}). If set to \code{FALSE} exact sampling 
-(\code{\link[rstan]{rstan::sampling}}) is used.}
+(\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
+(\code{rstan::\link[rstan]{sampling}}) is used.}
 
 \item{adapt_delta}{[TODO: FILL IN]}
 
-\item{...}{arguments passed to \code{\link[rstan]{rstan::sampling}}
-(for \code{variational = TRUE}) or \code{\link[rstan]{rstan::vb}} 
+\item{...}{arguments passed to \code{rstan::\link[rstan]{sampling}}
+(for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
 (for \code{variational = FALSE})}
+}
+\value{
+An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
+representing the fitted results.
 }
 \description{
 [TODO: EXTENDED HEADER FILL IN]

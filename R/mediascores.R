@@ -12,11 +12,11 @@
 #' @param anchors vector of length 2 indicating index/column position of the 
 #'     anchor domains
 #' @param variational logical, should variational inference be used 
-#'     (\code{\link[rstan]{rstan::vb}}). If set to \code{FALSE} exact sampling 
-#'     (\code{\link[rstan]{rstan::sampling}}) is used.
+#'     (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
+#'     (\code{rstan::\link[rstan]{sampling}}) is used.
 #' @param adapt_delta [TODO: FILL IN]
-#' @param ... arguments passed to \code{\link[rstan]{rstan::sampling}}
-#'     (for \code{variational = TRUE}) or \code{\link[rstan]{rstan::vb}} 
+#' @param ... arguments passed to \code{rstan::\link[rstan]{sampling}}
+#'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
 #'     (for \code{variational = FALSE})
 #' 
 #' @return 
