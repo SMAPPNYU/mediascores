@@ -46,10 +46,10 @@ Returns a list with elements:
 }
 }
 \description{
-[EXTENDED HEADER]
+[TODO: EXTENDED HEADER]
 }
 \details{
-[THIS IS THE DETAILS SECTION]
+[TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
 }
 \examples{
 simulated_data = simulate_data() 
