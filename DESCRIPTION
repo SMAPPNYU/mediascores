@@ -30,4 +30,7 @@ NeedsCompilation: yes
 SystemRequirements: GNU make
 RoxygenNote: 6.1.1
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

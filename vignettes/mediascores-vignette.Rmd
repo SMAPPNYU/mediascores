@@ -1,11 +1,8 @@
 ---
+title: "Media Scores - Getting Started"
+author: "Gregory Eady"
 date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
-output:
-  html_document:
-    toc: false
-    toc_float: false
-    theme: default
-    highlight: default
+output: rmarkdown::html_vignette
 bibliography: "Bibliography.bib"
 biblio-style: apsr
 comment: ""
