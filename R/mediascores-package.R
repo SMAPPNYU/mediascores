@@ -4,7 +4,6 @@
 #' 
 #' @docType package
 #' @name mediascores-package
-#' @aliases mediascores
 #' @useDynLib mediascores, .registration = TRUE
 #' @import methods
 #' @import Rcpp

@@ -4,7 +4,7 @@
 #' 
 #' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
 #' 
-#' @param n_user, int, number of users in the data
+#' @param n_users, int, number of users in the data
 #' @param n_domains, int, number of domains that users can share
 #' @param n_groups, int, number of groups users can belong to
 #' @param group_prob, numeric vector of length \code{n_groups} specifying the 
@@ -55,17 +55,17 @@ simulate_data <- function(n_users = 200,
     group <- sample(1:n_groups, n_users, replace = TRUE, prob = group_prob)
     
     # Draw user-level intercept
-    alpha <- rnorm(n_users, mean = params$alpha_mu, sd = params$alpha_sigma)
+    alpha <- stats::rnorm(n_users, mean = params$alpha_mu, sd = params$alpha_sigma)
     
     # Draw domain-level intercept
-    gamma <- rnorm(n_domains, mean = 0, sd = params$gamma_sigma)
+    gamma <- stats::rnorm(n_domains, mean = 0, sd = params$gamma_sigma)
     
     # Draw ideology of each user conditional on group membership
-    theta = rnorm(n = n_users, mean = params$theta_mu[group], 
+    theta = stats::rnorm(n = n_users, mean = params$theta_mu[group], 
                   sd = params$theta_sigma[group])
     
     # Draw ideology of each news domain
-    zeta <- rnorm(n_domains, mean = 0, sd = 1)
+    zeta <- stats::rnorm(n_domains, mean = 0, sd = 1)
     
     # To define the polarization of the scale, for simulation, we'll define the 
     # anchors as the domains with the lowest and highest theta
