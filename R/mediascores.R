@@ -21,6 +21,8 @@ mediascores <- function(Y, group = NULL, anchors,
     n_groups <- 1
   }
 
+  # N = number of users; M = number of domains; G = number of groups;
+  # group = group each user belongs to; Y = user-domain count matrix
   model_data <- list(N = n_row, M = n_col, G = n_groups,
                      group = group, Y = Y, anchors = anchors)
 

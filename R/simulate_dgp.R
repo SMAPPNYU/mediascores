@@ -91,6 +91,7 @@ simulate_data <- function(n_user = 200,
                                     'theta' = theta, 'zeta' = zeta)))
 }
 
+<<<<<<< HEAD
 ### This will go into vignette:
 
 #library(rstan)
@@ -220,6 +221,3 @@ simulate_data <- function(n_user = 200,
 #     zeta < sapply(extract(posterior, paste0("zeta[", 1:n_domains, "]")), function(x) quantile(x, 0.95)))
 #mean(omega > sapply(extract(posterior, paste0("omega[", 1:n_users, "]")), function(x) quantile(x, 0.05)) &
 #     omega < sapply(extract(posterior, paste0("omega[", 1:n_users, "]")), function(x) quantile(x, 0.95)))
-#
-#
-#
