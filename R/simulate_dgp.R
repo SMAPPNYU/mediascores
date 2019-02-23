@@ -15,7 +15,7 @@
 #' @return
 #' Returns a list with elements:
 #' \itemize{
-#'     \item \code{'shares_data'}: A matrix (n_users x n_domains) of simulated counts of
+#'     \item \code{'Y'}: A matrix (n_users x n_domains) of simulated counts of
 #'         times each user shared a domain
 #'     \item \code{'group'}: Vector of length \code{n_users} indicating group
 #'         membership of each user
@@ -79,13 +79,13 @@ simulate_data <- function(n_users = 200,
     
     # Compute the values of the user-domain count matrix: the count of each domain
     # shared by each user
-    shares_data = do.call(rbind, lapply(1:n_users, function(i) {
+    Y = do.call(rbind, lapply(1:n_users, function(i) {
        MASS::rnegbin(n = n_domains, 
-                     mu = exp(alpha[i] + gamma - ((theta[i] - zeta)^2)),
+                     mu = exp(alpha[i] + gamma - ((theta[i] - zeta)^2)), 
                      theta = omega_user[i]*omega_domain)
     })) 
     
-    return(list("shares_data" = shares_data, "group" = group, 
+    return(list("Y" = Y, "group" = group, 
                 "anchors" = anchors, 
                 'parameters' = list('alpha' = alpha, 'gamma' = gamma, 
                                     'theta' = theta, 'zeta' = zeta)))
