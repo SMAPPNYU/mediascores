@@ -92,12 +92,8 @@ for(i in 1:n_users) {
 # Compile the mediascore Stan model
 model_media_scores <- stan_model(file = "src/stan_files/mediascores.stan")
 
-# N = number of users; M = number of domains; G = number of groups;
-# group = group each user belongs to; Y = user-domain count matrix
-model_data <- list(N = nrow(Y), M = ncol(Y), G = length(unique(group)),
-                   group = group, Y = Y, anchors = anchors)
 
-
+# Fit the model
 posterior <- mediascores(Y, group, anchors, "meanfield")
 
 
