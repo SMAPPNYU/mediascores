@@ -133,13 +133,18 @@ set.seed(121)
 
 <h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news media ideology with news sharing behavior on social media</h1>
 <h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) package in R</h2>
-<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[`Author 1`](https://google.com)** and **[`Author 2`](https://google.com)** and **[`Author 3`](https://google.com)** ...</h5>
+<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[`Author 1`](https://google.com)**, **[`Author 2`](https://google.com)**, and **[`Author 3`](https://google.com)** ...</h5>
 <hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
 
 
 # 1. Introduction {#section1}
 
-This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores). The package implements .... In brief, the goal of the method is to model 
+This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores). The package implements a statistical model for news media sharing data on social media (e.g. Twitter, Facebook, Reddit). In brief, the goal of the method is to model (1) the news sharing ideology of both politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share itself (e.g. nytimes.com, cnn.com, foxnews.com).
+
+The logic behind the method is simple and intuitive, and is based on a homophily assumption: that politicians and social media users are more likely to share news stories online that are ideology 'close' to themselves, and avoid sharing stories that are 'far'. In the US context, for instance, a user who is liberal might be presumed to share more content from the New York Times or MSNBC than they are those from the Wall Street Journal or Fox News; conservatives, vice versa.
+
+
+
 
 # 2. Covariates {#section2}
 
