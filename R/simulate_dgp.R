@@ -12,7 +12,7 @@
 #' @param params, list containing parameters of the model distributions. See 
 #'     Details section for more information [FILL IN]
 #'     
-#' @return
+#' @return 
 #' Returns a list with elements:
 #' \itemize{
 #'     \item \code{'Y'}: A matrix (n_users x n_domains) of simulated counts of

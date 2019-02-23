@@ -26,7 +26,7 @@ Details section for more information [FILL IN]}
 \value{
 Returns a list with elements:
 \itemize{
-    \item \code{'shares_data'}: A matrix (n_users x n_domains) of simulated counts of
+    \item \code{'Y'}: A matrix (n_users x n_domains) of simulated counts of
         times each user shared a domain
     \item \code{'group'}: Vector of length \code{n_users} indicating group
         membership of each user
