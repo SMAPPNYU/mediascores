@@ -137,7 +137,7 @@ set.seed(121)
 <!-- BEGIN DOCUMENT -->
 
 <h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news-sharing ideology with social media URL data</h1>
-<h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) library in R</h2>
+<h2 style = "font-size: 26px; margin-top: 15px">The [`mediascores`](https://cran.r-project.org/package=mediascores) library in R</h2>
 <!-- <h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Author 1](https://google.com)**, **[Author 2](https://google.com)**, and **[Author 3](https://google.com)**</h5> -->
 <h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Author 1](https://google.com)**^$\dagger$^, **[Author 2](https://google.com)**^$\dagger$^, **[Author 3](https://google.com)**^$\dagger$^
 
@@ -248,8 +248,64 @@ fitted_model <- mediascores(Y = User_Domain_Counts, group = D$group,
                             anchors = c(1, 2))
 ```
 
+# 5. Model diagnostics {#section5}
+
+The object returned from the `mediascores()` function is a standard [Stan](https://mc-stan.org) object. For in depth analysis of the posterior, one can therefore treat it as such and use open-source visualization tools to examine it, such as [`shinystan`](https://mc-stan.org/users/interfaces/shinystan):
+
+```{r eval = FALSE}
+library(shinystan)
+shiny_stan(fitted_model)
+```
+
+Here, we focus on a simple helper function in the [`mediascores`](https://cran.r-project.org/package=mediascores) library to access the convergence statistic, $\hat{R}$, which is the commonly used means of assessing whether one's parameters of interest have converged. Here we use the `rhat()` function to display the $\hat{R}$ statistic for the two typical quantities of interest, $theta_i$ (the sharing ideology of users), and $\zeta_m$ (the ideology of news media domains):
+
+```{r eval = FALSE}
+rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
+print(rhats)
+``` 
+
+```{r echo = FALSE}
+rhats <- rhat(posterior = fitted_model, pars = c("theta", "zeta"))
+{print(subset(rhats, rownames(rhats) %in% c("zeta[1]", "zeta[2]", "zeta[3]", "zeta[4]", "zeta[5]")))
+cat("...\n")
+print(subset(rhats, rownames(rhats) %in% paste0("theta[", (nrow(User_Domain_Counts)-4):nrow(User_Domain_Counts), "]")))}
+```
+
+The function outputs the $\hat{R}$ statistics for all the specified parameters, and includes a warning for any of those parameters that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. As we can see, for the fitted model, there are 10 values of $\hat{R}$ for the parameters $\zeta_m$ that are greater than 1.1.
+
+We can look at the parameters $\zeta_m$ with values greater than 1.1 as follows:
+
+```{r}
+subset(rhats, rhat > 1.1)
+```
+
+Here, we can see that the parameters for which we have received warnings are just on the edge of the 1.1 threshold. In such cases, one can use estimates as is, or to ensure that all parameters are below the 1.1 threshold, re-run the model to collect more iterations:
+
+```{r eval = FALSE}
+# Setting iter = 2000 (not run)
+fitted_model <- mediascores(Y = User_Domain_Counts, group = D$group,
+                            variational = FALSE, seed = 1,
+                            warmup = 750, iter = 2000, chains = 4,
+                            open_progress = TRUE,
+                            # output_samples = 5000, tol_rel_obj = 0.001,
+                            anchors = c(1, 2))
+```
+
+For more detail on $\hat{R}$, see the [Stan Modeling Language User Guide and Reference](https://mc-stan.org/users/documentation/).
 
 
+## 5.1 Divergent transitions {#subsection51}
+
+If you receive a message stating that there were "divergent transitions" during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but it can typically be resolved by increasing the value of the `adapt_delta`, which can be included in the `mediascores()` function as follows: `mediascores(..., control = list(adapt_delta = 0.99))`. The default value is 0.8 (with a maximum less than 1). Values of 0.99 or 0.999 typically resolve the problem, however, note that increasing the value of `adapt_delta` can substantially increase the time for model fitting, which is computationally demanding as is, especially with relatively large datasets. In practice, we have fortunately not yet run into this problem.
+
+## 5.2 Maximum treedepth exceeded {#subsection52}
+
+If you receive a message stating that the "maximum treedepth" was frequently exceeded during estimation, the concern is not validity, but efficiency. If desired, you can increase efficiency by increasing the value of the `max_treedepth` argument, which defaults to 10. As with `adapt_delta`, this argument can be included thusly: `mediascores(..., control = list(max_treedepth = 15))`.
+
+
+# 6. Analysis {#section6}
+
+Finally, we can examine the estimates of our quantities of interest: the sharing ideology of Members of Congress and the ideology of the news media content that they share.
 
 
 # References
