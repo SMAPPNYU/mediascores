@@ -43,3 +43,48 @@ point_est <- function(posterior,
   out <- t(apply(X, 2, stats::quantile, probs = c(0.5, probs)))
   structure(out, dimnames = list(colnames(X), labels))
 }
+
+
+#' Display Rhat values for the parameters of interest
+#' 
+#' [TODO: EXTENDED HEADER]
+#' 
+#' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
+#' 
+#' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
+#' @param pars [TODO: FILL IN].
+#'     
+#' @return
+#' Returns a vector of rhat values for the parameters specified by the pars
+#' argument
+#' 
+#' @examples
+#' \dontrun{
+#' simulated_data <- simulate_data()
+#' posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
+#'                          anchors = simulated_data$anchors, 
+#'                          variational = TRUE)
+#' rhat(posterior, pars = c("theta", "zeta"))
+#' }
+#' @export
+rhat <- function(posterior,
+                 pars = c("theta", "theta_mu", "theta_sigma", "zeta",
+                          "alpha", "alpha_mu", "alpha_sigma", "gamma", 
+                          "gamma_sigma", "omega_domain", "omega_user")) {
+
+  pars_grep <- gsub("\\[", "\\\\[", pars)
+  pars_grep <- gsub("\\]", "\\\\]", pars_grep)
+  keep_pars <- unlist(sapply(pars_grep, function(x) {
+      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE)
+  }))
+
+  out <- as.matrix(rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
+
+  rownames(out)[which(out < 1.1)]
+
+  structure(out, dimnames = list(rownames(out), "Rhat"))
+}
+
+
+
+
