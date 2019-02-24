@@ -131,6 +131,74 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
 options(width = 10000)
 knitr::opts_chunk$set(comment = "")
 set.seed(121)
+library(ggplot2)
+my.theme <- function(base_size = 10, base_family = "",
+                     remove.ticks.x = FALSE,
+                     remove.ticks.y = FALSE,
+                     grid.x_colour = NA, grid.y_colour = NA,
+                     grid.x_linetype = NA, grid.y_linetype = NA,
+                     grid.x_size = NA, grid.y_size = NA,
+                     strip_colour = NA, strip_text = "black",
+                     background_colour = NA,
+                     plot_background_colour = NA,
+                     text_colour = NA,
+                     tick_colour = "black", tick_length = 0.2,
+                     borderless = 0, bordersize = 0.5){ 
+    if((!is.na(grid.x_linetype) | !is.na(grid.x_size)) & is.na(grid.x_colour)) {
+        grid.x_colour <- "black"
+    }
+    if((!is.na(grid.y_linetype) | !is.na(grid.y_size)) & is.na(grid.y_colour)) {
+        grid.y_colour <- "black"
+    }
+
+  if(is.na(grid.x_size)) grid.x_size <- 0.25
+  if(is.na(grid.x_linetype)) grid.x_linetype <- 1
+  if(is.na(grid.y_size)) grid.y_size <- 0.25
+  if(is.na(grid.y_linetype)) grid.y_linetype <- 1
+
+  if(borderless == 2) {
+    border <- theme(panel.border = element_blank(),
+                    strip.background = element_blank())
+  }
+  
+  else if(borderless == 1) {
+    border <- theme(axis.line = element_line(colour = "black", size = 0.25),
+                    panel.border = element_blank(),
+                    # panel.background = element_blank(),
+                    strip.background = element_blank())
+  }
+  else if(borderless == 0) border <- theme()
+  if(remove.ticks.x == TRUE) border <- border + theme(axis.ticks.x = element_blank())
+  if(remove.ticks.y == TRUE) border <- border + theme(axis.ticks.y = element_blank())
+  theme(axis.text.x       = element_text(family = base_family, colour = "black", size = base_size, vjust = 1, lineheight = 0.9),
+        axis.text.y       = element_text(family = base_family, colour = "black", size = base_size, hjust = 1, lineheight = 0.9),
+        axis.ticks        = element_line(colour = tick_colour, size = 0.2),
+        axis.ticks.length = unit(tick_length, "lines"),
+        axis.title.x      = element_text(family = base_family, face = "bold", size = base_size*0.9, colour = "black", vjust = 0),
+        axis.title.y      = element_text(family = base_family, face = "bold", size = base_size*0.9, angle = 90, colour = "black", vjust = 1),
+        legend.background = element_blank(),#element_rect(fill = "grey95"),
+        legend.key = element_blank(),
+        legend.key.size = unit(0.6, "lines"),
+        legend.text = element_text(family = base_family, size = base_size, color = "black", face = "plain", lineheight = 1),
+        legend.text.align = -1, 
+        legend.title = element_blank(),
+        legend.title.align = 1,
+        legend.position = "top",
+        legend.direction = "horizontal",
+        legend.justification = c(0, 1),
+        panel.background = element_rect(fill = NA),
+        panel.border = element_rect(fill = "transparent", colour = "black", size = bordersize),
+        panel.grid.major.x = element_line(colour = grid.x_colour, size = grid.x_size, linetype = grid.x_linetype),
+        panel.grid.major.y = element_line(colour = grid.y_colour, size = grid.y_size, linetype = grid.y_linetype),
+        panel.grid.minor = element_blank(),
+        panel.margin = unit(0.75, "lines"),
+        strip.background = element_blank(),
+        strip.text.x = element_text(family = base_family, size = base_size, face = "bold", colour = strip_text),
+        strip.text.y = element_text(family = base_family, size = base_size, face = "plain", angle = -90, colour = strip_text),
+        plot.background = element_rect(fill = NA, colour = NA),
+        plot.title = element_text(family = base_family, size = base_size * 1.1, vjust = 0.5, hjust = 0, face = "bold")) +
+    border
+}
 ```
 
 
@@ -155,7 +223,7 @@ Below, we work through an application of the method to Twitter data collected fr
 
 # 2. Data {#section2}
 
-As data, the model uses the number of news media stories that are shared by social media users. For the purpose of this vignette, we use the stories shared by members of the 115^th^ US Congress, US governors, and members of the US executive (e.g. the current and former Presidents). The data come from the timelines of these politicians, which were collected using the Twitter API near the end of 2018. The URLs from each timeline were first extracted and unshortened as necessary (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD) ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html)).^[An example of a (parallelized) link unshortener is that developed by [Leon Yin](http://leonyin.org/), [`urlExpander`](https://github.com/SMAPPNYU/urlExpander).] The resulting matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.
+As data, the model uses the number of news media stories that are shared by social media users. For the purpose of this vignette, we use the stories shared by members of the 115^th^ US Congress, US governors, and members of the US executive (e.g. the current and former Presidents). The data come from the timelines of these politicians, which were collected using the Twitter API near the end of 2018. The URLs from each timeline were first extracted and unshortened as necessary (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD) ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html)).^[An example of a (parallelized) link unshortener is that developed by [Leon Yin](http://leonyin.org/): [`urlExpander`](https://github.com/SMAPPNYU/urlExpander).] The resulting matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.
 
 First, we read in the `data.frame`, which contains the number of stories that have been tweeted by each politician, in addition to basic identifying information about each actor:
 
@@ -257,7 +325,7 @@ library(shinystan)
 shiny_stan(fitted_model)
 ```
 
-Here, we focus on a simple helper function in the [`mediascores`](https://cran.r-project.org/package=mediascores) library to access the convergence statistic, $\hat{R}$, which is the commonly used means of assessing whether one's parameters of interest have converged. Here we use the `rhat()` function to display the $\hat{R}$ statistic for the two typical quantities of interest, $theta_i$ (the sharing ideology of users), and $\zeta_m$ (the ideology of news media domains):
+Here, we focus on a simple helper function in the [`mediascores`](https://cran.r-project.org/package=mediascores) library to access the convergence statistic, $\hat{R}$, which is the commonly used means of assessing whether one's parameters of interest have converged. Here we use the `rhat()` function to display the $\hat{R}$ statistic for the two typical quantities of interest, $\vartheta_i$ (the sharing ideology of users), and $\zeta_m$ (the ideology of news media domains):
 
 ```{r eval = FALSE}
 rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
@@ -305,7 +373,151 @@ If you receive a message stating that the "maximum treedepth" was frequently exc
 
 # 6. Analysis {#section6}
 
-Finally, we can examine the estimates of our quantities of interest: the sharing ideology of Members of Congress and the ideology of the news media content that they share.
+Finally, we examine the estimates of our quantities of interest: (1) the sharing ideology of Members of Congress, and (2) the ideology of the news media content that they share.
+
+To pull out these estimates, we can use the `point_est()` function, which calucates the median of the posterior of each parameter of interest, and provides credible intervals:
+
+```{r eval = FALSE}
+theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
+print(theta_hat)
+```
+
+```{r echo = FALSE}
+theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
+{print(subset(theta_hat, rownames(theta_hat) %in% c("theta[1]", "theta[2]", "theta[3]", "theta[4]", "theta[5]")))
+cat("...\n")
+print(subset(theta_hat, rownames(theta_hat) %in% paste0("theta[", (nrow(User_Domain_Counts)-4):nrow(User_Domain_Counts), "]")))}
+```
+
+Because these data are ordered as they are in our original data, we can merge them into our politicians dataset and see how news sharing ideology aligns with voting ideology (i.e. NOMINATE scores):
+
+```{r}
+D$theta_hat <- theta_hat[, "median"]
+
+# All politicians
+cor(D$theta_hat, D$nominate, use = "complete.obs")
+
+# Democrats
+cor(D$theta_hat[D$party == "Democrat"], D$nominate[D$party == "Democrat"], use = "complete.obs")
+
+# Republicans
+cor(D$theta_hat[D$party == "Republican"], D$nominate[D$party == "Republican"], use = "complete.obs")
+```
+
+We can further graph these estimates as follows:
+
+```{r echo = FALSE}
+D$role <- factor(D$role, levels = c("Senate", "House", "Governor", "Politician-Other", "Other", "Delegate"))
+```
+
+```{r, eval = FALSE}
+ggplot(subset(D, role %in% c("Senate", "House")),
+       aes(x = theta_hat, y = nominate, color = party,
+           fill = party, shape = party)) +
+  facet_wrap(~ role) +
+  labs(x = expression(bold(paste("Media score (", vartheta, ")"))),
+       y = "DW-NOMINATE") +
+  coord_cartesian(xlim = c(-1.1, 1.6), ylim = c(-1.1, 1.1), expand = FALSE) +
+  geom_point(size = 2.25, shape = 21, stroke = 0.4) +
+  scale_colour_manual(values = c("Republican" = "red", "Democrat" = "white")) +
+  scale_fill_manual(values = c("Republican" = NA, "Democrat" = "blue")) +
+  theme(legend.position = "none")
+```
+
+```{r, echo = FALSE, out.width = "100%", fig.height = 4, warning = FALSE}
+ggplot(subset(D, role %in% c("Senate", "House")),
+       aes(x = theta_hat, y = nominate, color = party,
+           fill = party, shape = party)) +
+  my.theme(base_size = 11, borderless = 2,
+           remove.ticks.x = TRUE, remove.ticks.y = TRUE,
+           grid.x_colour = "grey50", grid.y_colour = "grey50",
+           grid.x_linetype = 3, grid.y_linetype = 3) +
+  facet_wrap(~ role) +
+  labs(x = expression(bold(paste("Media score (", vartheta, ")"))),
+       y = "DW-NOMINATE") +
+  coord_cartesian(xlim = c(-1.1, 1.6), ylim = c(-1.1, 1.1), expand = FALSE) +
+  geom_point(size = 2.5, shape = 21, stroke = 0.4) +
+  scale_colour_manual(values = c("Republican" = "red", "Democrat" = "white")) +
+  scale_fill_manual(values = c("Republican" = NA, "Democrat" = "blue")) +
+  theme(legend.position = "none",
+        panel.margin = unit(1.25, "lines"))
+```
+
+We can also examine estimates of the ideology of the news media domains as follows:
+
+```{r}
+zeta_hat <- point_est(fitted_model, "zeta", prob = 0.9)
+
+# Collect the estimates of news media ideology in a data.frame
+M <- data.frame(media_org = colnames(D)[7:(ncol(D)-1)],
+                zeta_hat = zeta_hat[, "median"],
+                zeta_hat_5 = zeta_hat[, "5%"],
+                zeta_hat_95 = zeta_hat[, "95%"])
+
+# Re-order media_org for plotting from low values of zeta to high
+M$media_org <- reorder(M$media_org, -M$zeta_hat)
+```
+
+Graph news media ideology estimates with 90% credible intervals:
+
+```{r, eval = FALSE}
+M$label <- "right"
+M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
+
+ggplot(M, aes(x = zeta_hat, y = media_org)) +
+  coord_cartesian(xlim = c(-3.4, 3.4)) +
+  scale_y_discrete(breaks = c()) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "", x = expression(bold(paste("Media score (", zeta, ")")))) +
+  geom_segment(aes(x = zeta_hat_5, xend = zeta_hat_95, y = media_org, yend = media_org),
+                   size = 2, color = "grey85") +
+  geom_point(size = 1.25, shape = 21, stroke = 0.4, color = "black",
+             fill = "black", shape = 21) +
+  geom_label(data = subset(M, label == "left"),
+             aes(x = zeta_hat_5, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 1, size = 2.5, nudge_x = -0.13) +
+  geom_label(data = subset(M, label == "right"),
+             aes(x = zeta_hat_95, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 0, size = 2.5, nudge_x = 0.13)
+```
+
+
+```{r, echo = FALSE, fig.height = 15, out.width = "100%"}
+M$label <- "right"
+M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
+
+ggplot(M, aes(x = zeta_hat, y = media_org)) +
+  my.theme(base_size = 11, borderless = 2,
+           remove.ticks.x = TRUE,
+           grid.x_linetype = 3) +
+  coord_cartesian(xlim = c(-3.4, 3.4)) +
+  scale_y_discrete(breaks = c()) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "", x = expression(bold(paste("Media score (", zeta, ")")))) +
+  geom_segment(aes(x = zeta_hat_5, xend = zeta_hat_95, y = media_org, yend = media_org),
+                   size = 2, color = "grey85") +
+  geom_point(size = 1.25, shape = 21, stroke = 0.4, color = "black",
+             fill = "black", shape = 21) +
+  geom_label(data = subset(M, label == "left"),
+             aes(x = zeta_hat_5, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 1, size = 2.5, nudge_x = -0.13) +
+  geom_label(data = subset(M, label == "right"),
+             aes(x = zeta_hat_95, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 0, size = 2.5, nudge_x = 0.13) +
+    theme(plot.margin = unit(c(0.5, 0.25, 0.5, -1), "lines"))
+```
+
+
+
+
 
 
 # References
