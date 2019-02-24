@@ -75,14 +75,25 @@ rhat <- function(posterior,
   pars_grep <- gsub("\\[", "\\\\[", pars)
   pars_grep <- gsub("\\]", "\\\\]", pars_grep)
   keep_pars <- unlist(sapply(pars_grep, function(x) {
-      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE)
+      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE, perl = TRUE)
   }))
 
-  out <- as.matrix(rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
+  out <- data.frame(rhat = rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
 
-  rownames(out)[which(out < 1.1)]
+  large_rhat <- data.frame(table(gsub("\\[.*", "", rownames(out)[which(out > 1.1)])))
 
-  structure(out, dimnames = list(rownames(out), "Rhat"))
+  # Warning message
+  if (nrow(large_rhat) > 0) {
+    warning_message <- ""
+    for(i in 1:nrow(large_rhat)) {
+      warning_message <- paste0(warning_message, large_rhat[i, 2], " Rhat values of ", large_rhat[i, 1], " are greater than 1.1")
+      if(i < nrow(large_rhat)) warning_message <- paste0(warning_message, "\n  ")
+    }
+    warning(warning_message)
+  }
+
+  return(out)
+
 }
 
 
