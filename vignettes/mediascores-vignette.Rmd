@@ -1,13 +1,16 @@
 ---
-title: "Media Scores - Getting Started"
-author: "Gregory Eady"
 date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
-output: rmarkdown::html_vignette
+output:
+  html_document:
+    toc: false
+    toc_float: false
+    theme: default
+    highlight: default
 bibliography: "Bibliography.bib"
 biblio-style: apsr
 comment: ""
 vignette: >
-  %\VignetteIndexEntry{mediascores Vignette}
+  %\VignetteIndexEntry{misreport Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 params:
@@ -15,7 +18,7 @@ params:
 ---
 
 <!--- 
-rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
+rmarkdown::render("~/Dropbox (Personal)/Software/misreport/vignettes/misreport-vignette.Rmd")
 -->
 
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,900' rel='stylesheet' type='text/css'>
@@ -37,7 +40,7 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
   body {
     background: #F6F6F6;
     font-family: 'Open Sans', sans-serif;
-    font-size: 15px;
+    font-size: 17px;
   }
 
   mark {
@@ -70,8 +73,9 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
   .container-fluid h1{
     text-align: left;
     letter-spacing: 1px;
+    line-height: 130%;
     font-weight: 900;
-    font-size: 30px;
+    font-size: 32px;
     padding-top:10px;
     padding-bottom:5px;
   }
@@ -80,7 +84,7 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
     text-align: left;
     letter-spacing: 1px;
     font-weight: 900;
-    font-size: 20px;
+    font-size: 18px;
     padding-bottom:5px;
   }
 
@@ -107,7 +111,7 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
   a:visited,
   a:hover,
   a:active {
-    color: #006400;
+    color: #db0057;
   }
 
   hr {
@@ -116,7 +120,7 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
     margin-right: auto; 
     height: 0px;
     border: 1px;
-    color: #006400;
+    color: #db0057;
     border-top: dotted 1px;
   }
 
@@ -129,24 +133,32 @@ knitr::opts_chunk$set(comment = "")
 set.seed(121)
 ```
 
+
 <!-- BEGIN DOCUMENT -->
 
 <h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news media ideology with news sharing behavior on social media</h1>
 <h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) package in R</h2>
-<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[`Author 1`](https://google.com)**, **[`Author 2`](https://google.com)**, and **[`Author 3`](https://google.com)** ...</h5>
+<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Gregory Eady](https://google.com)**, **[Frido Linder](https://google.com)**, and **[Author 3](https://google.com)**</h5>
 <hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
 
 
 # 1. Introduction {#section1}
 
-This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores). The package implements a statistical model for news media sharing data on social media (e.g. Twitter, Facebook, Reddit). In brief, the goal of the method is to model (1) the news sharing ideology of both politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share itself (e.g. nytimes.com, cnn.com, foxnews.com).
+This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores), which implements a statistical model for news media sharing data on social media (e.g. Twitter, Facebook, Reddit). The goal of the method is to provide a measure of (1) the news sharing ideology of both politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share (e.g. nytimes.com, cnn.com, foxnews.com).
 
-The logic behind the method is simple and intuitive, and is based on a homophily assumption: that politicians and social media users are more likely to share news stories online that are ideology 'close' to themselves, and avoid sharing stories that are 'far'. In the US context, for instance, a user who is liberal might be presumed to share more content from the New York Times or MSNBC than they are those from the Wall Street Journal or Fox News; conservatives, vice versa.
+The logic behind the method is intuitive, and is based on a straightforward assumption of homophily: that politicians and ordinary users on social media are more likely to share news stories that are ideology close to themselves, and avoid sharing stories that are ideologically distant. In the US context, for example, a user who is liberal can be assumed to share more content from the New York Times or MSNBC than they are content from the Wall Street Journal or Fox News. Conservatives, by contrast, will be more likely to share more content from the Wall Street Journal and Fox News than from the New York Times or MSNBC.
+
+Below, we work through an application of the method to Twitter data collected from politicians during the 115th Congress. Our example shows how researchers can use these or analogous data to calculate the news-sharing ideology of social media users---in this case, politicians---and the ideology of the content they themselves share.
+
+# 2. Data {#section2}
+
+As data, the model uses the number of stories from each news media domain that is shared by each politician or user. In this vignette, we work through an example using the news stories shared by members of the 115th US Congress, governors, and members of the US executive (e.g. past and former Presidents). The data come from the timelines of these users, as collected by one of the authors through the Twitter API near the end of 2018. The URLs from each timeline were extracted and, when necessary, unshortened (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD) ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html)). The final matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.
 
 
 
 
-# 2. Covariates {#section2}
+
+# 3. Covariates {#section3}
 
 Before turning to the data-generating process
 
