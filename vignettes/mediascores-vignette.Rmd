@@ -18,7 +18,7 @@ params:
 ---
 
 <!--- 
-rmarkdown::render("~/Dropbox (Personal)/Software/misreport/vignettes/misreport-vignette.Rmd")
+rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
 -->
 
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,900' rel='stylesheet' type='text/css'>
@@ -33,7 +33,7 @@ rmarkdown::render("~/Dropbox (Personal)/Software/misreport/vignettes/misreport-v
 <style>
   @media {
     .container-fluid{
-      max-width: 750px;
+      max-width: 800px;
     }
   }
 
@@ -136,52 +136,107 @@ set.seed(121)
 
 <!-- BEGIN DOCUMENT -->
 
-<h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news media ideology with news sharing behavior on social media</h1>
-<h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) package in R</h2>
-<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Gregory Eady](https://google.com)**, **[Frido Linder](https://google.com)**, and **[Author 3](https://google.com)**</h5>
+<h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news-sharing ideology with social media URL data</h1>
+<h2 style = "font-size: 26px; margin-top: 15px">Using the [`mediascores`](https://cran.r-project.org/package=mediascores) library in R</h2>
+<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Author 1](https://google.com)**, **[Author 2](https://google.com)**, and **[Author 3](https://google.com)**</h5>
 <hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
 
 
 # 1. Introduction {#section1}
 
-This document provides a brief introduction to the R package [`mediascores`](https://cran.r-project.org/package=mediascores), which implements a statistical model for news media sharing data on social media (e.g. Twitter, Facebook, Reddit). The goal of the method is to provide a measure of (1) the news sharing ideology of both politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share (e.g. nytimes.com, cnn.com, foxnews.com).
+This document provides a brief introduction to the R library [`mediascores`](https://cran.r-project.org/package=mediascores), which implements a statistical model for news media sharing data on social media (e.g. Twitter, Facebook, Reddit). The goal of the method is to provide a measure of (1) the news sharing ideology of politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share (e.g. nytimes.com, cnn.com, foxnews.com).
 
 The logic behind the method is intuitive, and is based on a straightforward assumption of homophily: that politicians and ordinary users on social media are more likely to share news stories that are ideology close to themselves, and avoid sharing stories that are ideologically distant. In the US context, for example, a user who is liberal can be assumed to share more content from the New York Times or MSNBC than they are content from the Wall Street Journal or Fox News. Conservatives, by contrast, will be more likely to share more content from the Wall Street Journal and Fox News than from the New York Times or MSNBC.
 
-Below, we work through an application of the method to Twitter data collected from politicians during the 115th Congress. Our example shows how researchers can use these or analogous data to calculate the news-sharing ideology of social media users---in this case, politicians---and the ideology of the content they themselves share.
+Below, we work through an application of the method to Twitter data collected from politicians during the 115^th^ Congress. Our example shows how researchers can use these or analogous data to calculate the news-sharing ideology of social media users---in this case, politicians---and the ideology of the content they themselves share.
 
 # 2. Data {#section2}
 
-As data, the model uses the number of stories from each news media domain that is shared by each politician or user. In this vignette, we work through an example using the news stories shared by members of the 115th US Congress, governors, and members of the US executive (e.g. past and former Presidents). The data come from the timelines of these users, as collected by one of the authors through the Twitter API near the end of 2018. The URLs from each timeline were extracted and, when necessary, unshortened (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD) ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html)). The final matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.
+As data, the model uses the number of news media stories that are shared by social media users. For the purpose of this vignette, we use the stories shared by members of the 115^th^ US Congress, US governors, and members of the US executive (e.g. the current and former Presidents). The data come from the timelines of these politicians, which were collected using the Twitter API near the end of 2018. The URLs from each timeline were first extracted and unshortened as necessary (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD) ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html)).^[An example of a (parallelized) link unshortener is that developed by [Leon Yin](http://leonyin.org/), [`urlExpander`](https://github.com/SMAPPNYU/urlExpander).] The resulting matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.
 
-
-
-
-
-# 3. Covariates {#section3}
-
-Before turning to the data-generating process
-
-To begin, let's say that we have $10000$ respondents $i = 1, \ldots, 10000$ in a data.frame `A`:
+First, we read in the `data.frame`, which contains the number of stories that have been tweeted by each politician, in addition to basic identifying information about each actor:
 
 ```{r}
-n <- 10000
-A <- data.frame(i = 1:n)
+D <- readRDS("~/GitHub/mediascores/data/115Congress.rds") # Make this local data
 ```
 
-For concreteness, we will generate respondent characteristics that we will say represent age, gender, and education:
+The identifying information are contained in the first 6 variables of the data set:
+
+* `name` e.g. "Nancy Pelosi"
+* `nominate_name` e.g. "PELOSI, Nancy"
+* `party` {Democrat, Republican}
+* `group` {1 = Democrat, 2 = Republican}
+* `role` {Senator, House, Governor, Delegate, Other}
+* `nominate` NOMINATE score of Members of Congress^[NOMINATE scores are the canonical measure of Members of Congress's ideology, based on their roll-call voting record [@Poole1985; @Poole2005]. NOMINATE data were downloaded from [VoteView](https://voteview.com).]
+
+The remaining columns represent the data used to estimate the ideology of users and news media organizations, and represent the count of the news stories tweeted or retweeted by each user (i.e. politician). To make this concrete, a subset of these columns is shown alongside the names of five well-known US politicians:
 
 ```{r}
-A$age <- round(runif(n, 18, 90))
-A$gender <- sample(c("Woman", "Man"), n, replace = TRUE, prob = c(0.52, 0.48))
-A$education <- sample(c("Below high school",
-                        "High school",
-                        "College"),
-                      n, replace = TRUE, prob = c(0.25, 0.35, 0.4))
-A$education <- factor(A$education, levels = c("Below high school",
-                                              "High school",
-                                              "College"))
+columns_to_show <- c("name", "thenation.com", "huffingtonpost.com",
+                     "washingtonpost.com", "foxnews.com", "breitbart.com")
+politicians_to_show <- c("Ted Cruz", "Paul Ryan", "Susan Collins",
+                         "Nancy Pelosi", "Bernie Sanders")
+print(D[D$name %in% politicians_to_show, columns_to_show], row.names = FALSE)
 ```
+
+For observers of American politics, these data are as one might expect: Bernie Sanders---a relatively far left politician---shares far more news from the left (e.g. thenation.com, huffingtonpost.com) than he does that from the right (e.g. foxnews.com, breitbart.com). Ted Cruz---a relatively far right politician---by contrast, shares mostly news from the ideological right.
+
+The data used for the model, therefore, is a straightforward user-domain count matrix, where the rows denote users, the columns news media domains, and each cell represents the number of each domain that has been shared by each user. These form the core set of data for the model, and can be augmented if desired by a group indicator variable to indicate whether a given user is, for example, a Democrat, Republican, or ordinary user.
+
+
+# 3. A Statistical Model of News Sharing {#section3}
+
+To model these data, the [`mediascores`](https://cran.r-project.org/package=mediascores) library is designed to fit the following model:\begin{equation}
+y_{img} \sim \text{NegBin}(\pi_{img}, \omega_i\omega_m)
+\end{equation}\begin{equation}
+\pi_{img} = \text{exp}(\alpha_i + \gamma_m - ||\vartheta_i - \zeta_m||^2),
+\end{equation}
+
+where $y_{img}$ denotes the count of news stories from domain $m$ shared by user $i$ who belongs to group $g \in \{$Republican, Democrat$\}$ (i.e. the data in the data.frame shown above), $\alpha_i$ denotes a user-specific intercept, $\gamma_m$ denotes a domain-specific intercept, and $\omega_i$ and $\omega_m$ denote user- and domain-specific dispersion parameters respectively. The quanties of interest are denoted by $\vartheta_i$, which represents the news sharing ideology of user $i$, and $\zeta_m$, which represents the ideology of news media organization $m$. As the term $-||\vartheta_i - \zeta_m||^2$ shows, the larger the ideological spatial distance between a user $i$ and news media organization $m$ the less likely the user is to share stories from that organization.
+
+Because the model is fit in a Bayesian context, the priors placed on the parameters in the model are as follows: \begin{equation}
+\alpha_i \sim \text{Normal}(\mu_{\alpha}, \sigma_{\alpha})
+\end{equation}\begin{equation}
+\gamma_i \sim \text{Normal}(0, \sigma_{\gamma})
+\end{equation}
+
+Uniform prior distributions are placed on the hyperparameters $\mu_{\alpha}$, $\sigma_{\alpha}$ and $\sigma_{\gamma}$.
+
+Group-level information, $g$ (e.g. Democrat, Republican) is then incorporated by placing separate common prior distributions on the parameters denoting the ideology, $\vartheta_{ig}$, of politicians who are members of a given group: \begin{equation}
+\vartheta_{ig} \sim \text{Normal}(\mu_{\vartheta}^{(g)}, \sigma_{\vartheta}^{(g)})
+\end{equation}
+
+Uniform prior distributions are placed on the hyperparameters $\mu_{\vartheta}^{(g)}$ and $\sigma_{\vartheta}^{(g)}$. Finally, the variance parameters $\omega_i$ and $\omega_m$, are given a common distribution $\omega_i \sim \text{InvGamma}(\omega^{(i)}_a, \omega^{(i)}_b)$ and $\omega_m \sim \text{InvGamma}(\omega^{(m)}_a, \omega^{(m)}_b)$, where uniform priors are placed on the hyperparameters.
+
+For identification, the parameters representing news media ideology are given a standard normal distribution, $\zeta_m \sim \text{Normal}(0, 1)$. Lastly, the direction of the model needs to be set, such that high values represent ideological liberalism or conservativism. Here, we follow the practical solution of @Jackman2001, who suggests allowing the sampler to freely explore the posterior and settle in on one of the two scale directions. We then flip the scale and associated paramters after estimation (if required) depending on anchors defined by the researcher: the user is asked to set two news media domains for this purpose (e.g. \{nytimes.com, foxnews.com\}), such that the ideology of the first media organization defines the low end of the scale, and the second, the high end. In practice, this strategy works exceptionally well.
+
+
+# 4. Model Fitting {#section4}
+
+To fit the model, we use the user-domain count matrix as shown in Section 3. To obtain this matrix, we tranform the `data.frame` into a matrix, first removing the columns that provide information about each politician (e.g. name, party, nominate score), which are the first 6 columns of the data set:
+
+```{r}
+# Create user-domain count matrix
+User_Domain_Counts <- as.matrix(D[, -c(1:6)])
+
+# For reference, name rows by politician's name
+rownames(User_Domain_Counts) <- D$name
+
+# Show sub-matrix of first 5 politicians and 5 domains:
+print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)
+```
+
+We can now fit the model by inputting the user-domain count matrix in the workhorse function of the [`mediascores`](https://cran.r-project.org/package=mediascores) library, `mediascores()`, as follows:
+
+```{r eval = FALSE}
+fitted_model <- mediascores(Y = User_Domain_Counts, group = D$group,
+                            anchors = c(1, 2), variational = TRUE, seed = 1,
+                            # warmup = 750, iter = 1500, chains = 4,
+                            output_samples = 5000, tol_rel_obj = 0.001)
+```
+
+
+
 
 
 # References
