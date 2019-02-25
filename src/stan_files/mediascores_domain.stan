@@ -4,7 +4,6 @@ functions {
     int map_N = size(int_var);
     vector[map_N] map_alpha = global_par[1:map_N];
     vector[map_N] map_theta = global_par[(map_N+1):(map_N*2)];
-    vector[map_N] map_omega_user = global_par[(map_N*2+1):(map_N*3)];
     real map_gamma = local_par[1];
     real map_zeta = local_par[2];
     real map_omega_domain = local_par[3];
@@ -15,7 +14,7 @@ functions {
       lin_pred[i] = map_alpha[i] + map_gamma - square(map_theta[i] - map_zeta);
     }
 
-    ll = neg_binomial_2_log_lpmf(int_var | lin_pred, map_omega_user * map_omega_domain);
+    ll = neg_binomial_2_log_lpmf(int_var | lin_pred, map_omega_domain);
 
     return [ll]';
 
@@ -56,11 +55,7 @@ parameters {
   real<lower = 0> gamma_sigma; // Domain intercept
 
   // Variance
-  vector<lower = 0>[N] omega_user; // Dispersion (N or M)
-  real<lower = 0> omega_user_a;    // Dispersion
-  real<lower = 0> omega_user_b;    // Dispersion
-
-  vector<lower = 0>[M] omega_domain; // Dispersion (N or M)
+  vector<lower = 0>[M] omega_domain; // Dispersion
   real<lower = 0> omega_domain_a;    // Dispersion
   real<lower = 0> omega_domain_b;    // Dispersion
 
@@ -89,7 +84,6 @@ transformed parameters {
   
   for(i in 1:N) {
     theta_unconstrained[i] = theta_mu_unconstrained[group[i]] + theta_unconstrained_raw[i] * theta_sigma[group[i]];
-    // theta_unconstrained[i] = theta_unconstrained_raw[i];
   }
 
 }
@@ -105,10 +99,6 @@ model {
   gamma_sigma ~ normal(0, 2.5); // Domain intercept
   gamma_raw ~ normal(0, 1);     // Domain intercept
   
-  omega_user_a ~ normal(0, 5);
-  omega_user_b ~ normal(0, 5);
-  omega_user ~ inv_gamma(omega_user_a, omega_user_b); // Dispersion
-
   omega_domain_a ~ normal(0, 5);
   omega_domain_b ~ normal(0, 5);
   omega_domain ~ inv_gamma(omega_domain_a, omega_domain_b); // Dispersion
@@ -116,13 +106,12 @@ model {
   theta_sigma ~ normal(0, 1);             // User ideology
   theta_mu_unconstrained ~ normal(0, 1);  // User ideology
   theta_unconstrained_raw ~ normal(0, 1); // User ideology
-  // theta_unconstrained_raw ~ normal(0, 2.5); // User ideology
 
   zeta_sigma ~ normal(0, 1);             // Domain ideology
   zeta_unconstrained_raw ~ normal(0, 1); // Domain ideology
 
   target += sum(map_rect(neg_bin,
-                         append_row(append_row(alpha, theta_unconstrained), omega_user),
+                         append_row(alpha, theta_unconstrained),
                          gamma_zeta_omega, x_r, x_i));
 
 }

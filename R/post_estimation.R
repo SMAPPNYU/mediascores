@@ -37,6 +37,7 @@ point_est <- function(posterior,
   }))
 
   X <- as.matrix(posterior)[, keep_pars]
+  if(class(X) != "matrix") X <- matrix(X, dimnames = list(NULL, keep_pars))
   alpha <- (1 - prob) / 2
   probs <- c(alpha, 1 - alpha)
   labels <- c("median", paste0(100 * probs, "%"))

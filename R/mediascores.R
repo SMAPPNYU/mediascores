@@ -11,6 +11,10 @@
 #'    each user. If \code{NULL} every user is assigned to the same group.
 #' @param anchors vector of length 2 indicating index/column position of the 
 #'     anchor domains
+#' @param user_variance logical, whether to include a variance parameter for
+#'    each user (omega_i). Note that doing so makes the model more
+#'    computationally demanding and there is typically too few data to identify
+#'    these parameters.
 #' @param variational logical, should variational inference be used 
 #'     (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
 #'     (\code{rstan::\link[rstan]{sampling}}) is used.
@@ -30,12 +34,11 @@
 #'                          variational = FALSE, chains = 2)
 #' }
 #' @export
-mediascores <- function(Y, group = NULL, anchors, variational = FALSE,
-                        adapt_delta = 0.8, ...) {
+mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
+                        variational = FALSE, adapt_delta = 0.8, ...) {
 
   n_row <- nrow(Y)
   n_col <- ncol(Y)
-  n_groups <- 1
   if (!is.null(group)) {
     n_groups <- length(unique(group))
   } else {
@@ -49,9 +52,21 @@ mediascores <- function(Y, group = NULL, anchors, variational = FALSE,
                      group = group, Y = Y, anchors = anchors)
 
   if (variational) {
-    posterior <- rstan::vb(stanmodels$mediascores, data = model_data, ...)
+    if(user_variance) {
+      posterior <- rstan::vb(stanmodels$mediascores_vb,
+                             data = model_data, ...)
+    } else {
+      posterior <- rstan::vb(stanmodels$mediascores_domain_vb,
+                             data = model_data, ...)
+    }
   } else {
-    posterior <- rstan::sampling(stanmodels$mediascores, data = model_data, ...)
+    if(user_variance) {
+      posterior <- rstan::sampling(stanmodels$mediascores,
+                                   data = model_data, ...)
+    } else {
+      posterior <- rstan::vb(stanmodels$mediascores_domain,
+                             data = model_data, ...)
+    }
   }
 
   return(posterior)
