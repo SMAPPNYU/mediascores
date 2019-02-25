@@ -5,24 +5,34 @@
 #' [TODO: FILL IN MODEL DETAILS HERE]
 #' 
 #' @param Y matrix or dataframe of dimension (n_user x n_domains) containing 
-#'     counts of how often each user (row) shared a given domain (column). No 
-#'     missing data is permitted.
+#'      counts of how often each user (row) shared a given domain (column). No 
+#'      missing data is permitted.
 #' @param group vector of length \code{n_users} indicating group membership of 
-#'    each user. If \code{NULL} every user is assigned to the same group.
+#'     each user. If \code{NULL} every user is assigned to the same group.
 #' @param anchors vector of length 2 indicating index/column position of the 
-#'     anchor domains
+#'     anchor domains.
 #' @param user_variance logical, whether to include a variance parameter for
-#'    each user (omega_i). Note that doing so makes the model more
-#'    computationally demanding and there is typically too few data to identify
-#'    these parameters.
+#'     each user (omega_i). Note that doing so makes the model more
+#'     computationally demanding and there is typically too few data to identify
+#'     these parameters.
 #' @param variational logical, should variational inference be used 
 #'     (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
 #'     (\code{rstan::\link[rstan]{sampling}}) is used.
-#' @param adapt_delta [TODO: FILL IN]
+#' @param chains integer, the number of Markov chains to run. The default is 4.
+#' @param cores integer, the number of cores to use when running chains in
+#'     parallel.
+#' @param threads integer, the number of total threads to use when running
+#'      within-chain parallelization. Defaults is no within-chain
+#'      parallelization.
+#' @param iter integer, the number of total iterations per chain.
+#'     Defaults to 2000.
+#' @param warmup integer, the number of warmup/burnin iterations per chain.
+#'     Defaults to iter/2.
+#' @param refresh integer, the number of iterations per chain before sampling
+#'     progress on each chain is displayed.
 #' @param ... arguments passed to \code{rstan::\link[rstan]{sampling}}
 #'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
 #'     (for \code{variational = FALSE})
-#' 
 #' @return 
 #' An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
 #' representing the fitted results.
@@ -35,7 +45,10 @@
 #' }
 #' @export
 mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
-                        variational = FALSE, adapt_delta = 0.8, ...) {
+                        variational = FALSE, chains = 4,
+                        cores = getOption("mc.cores", 1L), threads = NULL,
+                        iter = 2000, warmup = iter/2, refresh = 50,
+                        ...) {
 
   n_row <- nrow(Y)
   n_col <- ncol(Y)
@@ -60,12 +73,21 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
                              data = model_data, ...)
     }
   } else {
+
+    if(!is.null(threads)) Sys.setenv("STAN_NUM_THREADS" = threads)
+
     if(user_variance) {
       posterior <- rstan::sampling(stanmodels$mediascores,
+                                   chains = chains, cores = cores,
+                                   warmup = warmup, iter = iter,
+                                   refresh = refresh,
                                    data = model_data, ...)
     } else {
-      posterior <- rstan::vb(stanmodels$mediascores_domain,
-                             data = model_data, ...)
+      posterior <- rstan::sampling(stanmodels$mediascores_domain,
+                                   chains = chains, cores = cores,
+                                   warmup = warmup, iter = iter,
+                                   refresh = refresh,
+                                   data = model_data, ...)
     }
   }
 
