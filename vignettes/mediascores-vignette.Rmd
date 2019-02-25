@@ -326,7 +326,7 @@ library(shinystan)
 shiny_stan(fitted_model)
 ```
 
-Here, we focus on a simple helper function in the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library to access the convergence statistic, $\hat{R}$, which is the commonly used means of assessing whether one's parameters of interest have converged. Here we use the `rhat()` function to display the $\hat{R}$ statistic for the two typical quantities of interest, $\vartheta_i$ (the sharing ideology of users), and $\zeta_m$ (the ideology of news media domains):
+Here, we focus on a simple helper function built into the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library to access the convergence statistic, $\hat{R}$, which is the commonly used means of assessing whether one's parameters of interest have converged. We can use the `rhat()` function to display the $\hat{R}$ statistic for the two typical quantities of interest, $\vartheta_i$ (the sharing ideology of users), and $\zeta_m$ (the ideology of news media domains):
 
 ```{r eval = FALSE}
 rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
@@ -348,7 +348,7 @@ We can look at the parameters $\zeta_m$ with values greater than 1.1 as follows:
 subset(rhats, rhat > 1.1)
 ```
 
-Here, we can see that the parameters for which we have received warnings are just on the edge of the 1.1 threshold. In such cases, one can use estimates as is, or to ensure that all parameters are below the 1.1 threshold, re-run the model to collect more iterations:
+Here, we can see that the parameters for which we have received warnings are just on the edge of the 1.1 threshold. In this case, we might therefore use the estimates as is or, to ensure that all parameters are below the 1.1 threshold, re-run the model using more iterations:
 
 ```{r eval = FALSE}
 # Setting iter = 2000 (not run)
@@ -516,9 +516,9 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 
 # 7. A Note on CPU Parallelization {#section7}
 
-The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded to use map-reduce to permit within-chain CPU parallelization for estimation. In effect, this means that you can use many CPU cores for model fitting, which can _substantially_ cut down on estimation time. This is especially useful even for medium-sized data sets, because estimation is computationally demanding. The drawback is that to turn on parallelization, the C++ code compiled during the library's installation must be done with flags to enable CPU parallelization. The process to do this unfortunately varies from system to system (e.g. Windows, Unix, Mac). For support, please consult the following resources: [Stan Threading Support](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"}, [Stan MPI Parallelism](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"} (for cluster-based systems), and the [Stan user forums](https://discourse.mc-stan.org){target="_blank"}.
+The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded to use map-reduce to permit within-chain CPU parallelization for estimation. In effect, this means that you can use many CPU cores for model fitting, which can _substantially_ cut down on estimation time. This is especially useful even for medium-sized data sets, because estimation is computationally demanding. The drawback is that to turn on parallelization, the C++ code compiled during the library's installation must be done with flags to enable CPU parallelization. The process to do this varies from system to system (e.g. Windows, Unix, Mac). For support, please consult the following resources: [Stan Threading Support](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"}, [Stan MPI Parallelism](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"} (for cluster-based systems), and the [Stan user forums](https://discourse.mc-stan.org){target="_blank"}.
 
-However, this can often by straightforward. As an example, enabling parallelization on the systems to which the author has access, only the following needed to be added to the `~/.R/Makevars` file (create this file if it does not exist):
+Note that enabling parallelization, however, is generally straightforward. For example, enabling parallelization on the systems to which the author has access required only that the following be added to the `~/.R/Makevars` file (create this file if it does not exist):
 
 On Mac OS (10.14.3):
 
