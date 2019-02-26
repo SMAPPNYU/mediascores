@@ -47,7 +47,7 @@
 mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
                         variational = FALSE, chains = 4,
                         cores = getOption("mc.cores", 1L), threads = NULL,
-                        iter = 2000, warmup = iter/2, refresh = 50,
+                        iter = 2000, warmup = iter/2, refresh = 100,
                         ...) {
 
   n_row <- nrow(Y)
