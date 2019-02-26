@@ -4,8 +4,9 @@
 \alias{mediascores}
 \title{Estimate the mediascores model}
 \usage{
-mediascores(Y, group = NULL, anchors, variational = FALSE,
-  adapt_delta = 0.8, ...)
+mediascores(Y, group = NULL, anchors, user_variance = FALSE,
+  variational = FALSE, chains = 4, cores = getOption("mc.cores", 1L),
+  threads = cores, iter = 2000, warmup = iter/2, refresh = 50, ...)
 }
 \arguments{
 \item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
@@ -16,13 +17,34 @@ missing data is permitted.}
 each user. If \code{NULL} every user is assigned to the same group.}
 
 \item{anchors}{vector of length 2 indicating index/column position of the 
-anchor domains}
+anchor domains.}
+
+\item{user_variance}{logical, whether to include a variance parameter for
+each user (omega_i). Note that doing so makes the model more
+computationally demanding and there is typically too few data to identify
+these parameters.}
 
 \item{variational}{logical, should variational inference be used 
 (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
 (\code{rstan::\link[rstan]{sampling}}) is used.}
 
-\item{adapt_delta}{[TODO: FILL IN]}
+\item{chains}{integer, the number of Markov chains to run. The default is 4.}
+
+\item{cores}{integer, the number of cores to use when running chains in
+parallel.}
+
+\item{threads}{integer, the number of total threads to use when running
+within-chain parallelization. Defaults is no within-chain
+parallelization.}
+
+\item{iter}{integer, the number of total iterations per chain.
+Defaults to 2000.}
+
+\item{warmup}{integer, the number of warmup/burnin iterations per chain.
+Defaults to iter/2.}
+
+\item{refresh}{integer, the number of iterations per chain before sampling
+progress on each chain is displayed.}
 
 \item{...}{arguments passed to \code{rstan::\link[rstan]{sampling}}
 (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 

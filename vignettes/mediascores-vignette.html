@@ -373,9 +373,11 @@ $(document).ready(function () {
 </div>
 
 
-<!--- 
+<ul>
+<li><!--
 rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
--->
+--></li>
+</ul>
 <p><style type="text/css; charset=utf-8">@font-face {
 font-family: 'Open Sans';
 font-style: normal;
@@ -512,7 +514,10 @@ The <a href="https://cran.r-project.org/package=mediascores" target="_blank"><co
 <h1>2. Data</h1>
 <p>As data, the model uses the number of news media stories that are shared by social media users. For the purpose of this vignette, we use the stories shared by members of the 115<sup>th</sup> US Congress, US governors, and members of the US executive (e.g. the current and former Presidents). The data come from the time lines of these politicians, which were collected using the Twitter API near the end of 2018. The URLs from each time line were first extracted and unshortened as necessary (e.g. <a href="https://nyti.ms/2BUTshD" target="_blank"><code>nyti.ms/2BUTshD</code></a> —&gt; <a href="https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html" target="_blank"><code>nytimes.com/2018/...</code></a>).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The resulting matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.</p>
 <p>First, we read in the <code>data.frame</code>, which contains the number of stories that have been tweeted by each politician, in addition to basic identifying information about each actor:</p>
-<pre class="r"><code>load(&quot;~/GitHub/mediascores/data/115Congress.RData&quot;) # Make this local data</code></pre>
+<pre class="r"><code>library(mediascores)
+
+# Read in Twitter URL-sharing data from members of the 115th Congress (among other politicians)
+data(MOC115)</code></pre>
 <p>The identifying information are contained in the first 6 variables of the data set:</p>
 <ul>
 <li><code>name</code> e.g. “Nancy Pelosi”</li>
@@ -527,7 +532,7 @@ The <a href="https://cran.r-project.org/package=mediascores" target="_blank"><co
                      &quot;washingtonpost.com&quot;, &quot;foxnews.com&quot;, &quot;breitbart.com&quot;)
 politicians_to_show &lt;- c(&quot;Ted Cruz&quot;, &quot;Paul Ryan&quot;, &quot;Susan Collins&quot;,
                          &quot;Nancy Pelosi&quot;, &quot;Bernie Sanders&quot;)
-print(Data[Data$name %in% politicians_to_show, columns_to_show], row.names = FALSE)</code></pre>
+print(MOC115[MOC115$name %in% politicians_to_show, columns_to_show], row.names = FALSE)</code></pre>
 <pre><code>           name thenation.com huffingtonpost.com washingtonpost.com foxnews.com breitbart.com
        Ted Cruz             0                  1                 40         106            28
       Paul Ryan             0                  0                 25          41             0
@@ -561,10 +566,10 @@ y_{img} \sim \text{NegBin}(\pi_{img}, \omega_i\omega_m)
 <h1>4. Model Fitting</h1>
 <p>To fit the model, we use the user-domain count matrix as shown in Section 3. To obtain this matrix, we transform the <code>data.frame</code> into a matrix, first removing the columns that provide information about each politician (e.g. name, party, nominate score), which are the first 6 columns of the data set:</p>
 <pre class="r"><code># Create user-domain count matrix
-User_Domain_Counts &lt;- as.matrix(Data[, -c(1:6)])
+User_Domain_Counts &lt;- as.matrix(MOC115[, -c(1:6)])
 
 # For reference, name rows by politician&#39;s name
-rownames(User_Domain_Counts) &lt;- Data$name
+rownames(User_Domain_Counts) &lt;- MOC115$name
 
 # Show sub-matrix of first 5 politicians and 5 domains:
 print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)</code></pre>
@@ -579,7 +584,7 @@ Dave Brat            8          82              3            0                  
 # anchor = c(1, 2) because column 1 in the matrix represents the NY Times
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
-fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = Data$group,
+fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             variational = FALSE, user_variance = FALSE,
                             chains = 4, cores = 4, threads = 4,
                             warmup = 750, iter = 1500, seed = 1,
@@ -613,7 +618,7 @@ theta[590] 1.030317</code></pre>
 &lt;0 rows&gt; (or 0-length row.names)</code></pre>
 <p>Here, we can see that none have values greater than 1.1. If we did, however, it is generally suggested that the researcher re-run the model, but collect more post-warmup iterations:</p>
 <pre class="r"><code># Setting iter = 2000 (not run)
-fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = Data$group,
+fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             variational = FALSE, user_variance = FALSE,
                             warmup = 750, iter = 2000, chains = 4,
                             open_progress = TRUE, seed = 1,
@@ -649,19 +654,19 @@ theta[588] -0.25053163 -0.5989367  0.1050847
 theta[589] -0.42535019 -0.7329090 -0.1437510
 theta[590] -0.09993017 -0.3721251  0.1609526</code></pre>
 <p>Because these data are ordered as they are in our original data, we can merge them into our politicians dataset and see how news sharing ideology aligns with voting ideology (i.e. NOMINATE scores):</p>
-<pre class="r"><code>Data$theta_hat &lt;- theta_hat[, &quot;median&quot;]
+<pre class="r"><code>MOC115$theta_hat &lt;- theta_hat[, &quot;median&quot;]
 
 # All politicians
-round(cor(Data$theta_hat, Data$nominate, use = &quot;complete.obs&quot;), 2)</code></pre>
+round(cor(MOC115$theta_hat, MOC115$nominate, use = &quot;complete.obs&quot;), 2)</code></pre>
 <pre><code>[1] 0.96</code></pre>
 <pre class="r"><code># Democrats
-round(cor(Data$theta_hat[Data$party == &quot;Democrat&quot;], Data$nominate[Data$party == &quot;Democrat&quot;], use = &quot;complete.obs&quot;), 2)</code></pre>
+round(cor(MOC115$theta_hat[MOC115$party == &quot;Democrat&quot;], MOC115$nominate[MOC115$party == &quot;Democrat&quot;], use = &quot;complete.obs&quot;), 2)</code></pre>
 <pre><code>[1] 0.57</code></pre>
 <pre class="r"><code># Republicans
-round(cor(Data$theta_hat[Data$party == &quot;Republican&quot;], Data$nominate[Data$party == &quot;Republican&quot;], use = &quot;complete.obs&quot;), 2)</code></pre>
+round(cor(MOC115$theta_hat[MOC115$party == &quot;Republican&quot;], MOC115$nominate[MOC115$party == &quot;Republican&quot;], use = &quot;complete.obs&quot;), 2)</code></pre>
 <pre><code>[1] 0.5</code></pre>
 <p>We can further graph these estimates as follows:</p>
-<pre class="r"><code>ggplot(subset(Data, role %in% c(&quot;Senate&quot;, &quot;House&quot;)),
+<pre class="r"><code>ggplot(subset(MOC115, role %in% c(&quot;Senate&quot;, &quot;House&quot;)),
        aes(x = theta_hat, y = nominate, color = party,
            fill = party, shape = party)) +
   facet_wrap(~ role) +
@@ -677,7 +682,7 @@ round(cor(Data$theta_hat[Data$party == &quot;Republican&quot;], Data$nominate[Da
 <pre class="r"><code>zeta_hat &lt;- point_est(fitted_model, &quot;zeta&quot;, prob = 0.9)
 
 # Collect the estimates of news media ideology in a data.frame
-M &lt;- data.frame(media_org = colnames(Data)[7:(ncol(Data)-1)],
+M &lt;- data.frame(media_org = colnames(MOC115)[7:(ncol(MOC115)-1)],
                 zeta_hat = zeta_hat[, &quot;median&quot;],
                 zeta_hat_5 = zeta_hat[, &quot;5%&quot;],
                 zeta_hat_95 = zeta_hat[, &quot;95%&quot;])

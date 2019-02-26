@@ -2,6 +2,7 @@
 
 export(mediascores)
 export(point_est)
+export(rhat)
 export(simulate_data)
 import(Rcpp)
 import(methods)
