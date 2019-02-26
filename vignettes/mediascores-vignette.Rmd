@@ -192,7 +192,7 @@ my.theme <- function(base_size = 10, base_family = "",
         panel.grid.major.x = element_line(colour = grid.x_colour, size = grid.x_size, linetype = grid.x_linetype),
         panel.grid.major.y = element_line(colour = grid.y_colour, size = grid.y_size, linetype = grid.y_linetype),
         panel.grid.minor = element_blank(),
-        panel.margin = unit(0.75, "lines"),
+        panel.spacing = unit(0.75, "lines"),
         strip.background = element_blank(),
         strip.text.x = element_text(family = base_family, size = base_size, face = "bold", colour = strip_text),
         strip.text.y = element_text(family = base_family, size = base_size, face = "plain", angle = -90, colour = strip_text),
@@ -207,8 +207,7 @@ my.theme <- function(base_size = 10, base_family = "",
 
 <h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news-sharing ideology with social media URL data</h1>
 <h2 style = "font-size: 26px; margin-top: 15px">The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library in R</h2>
-<!-- <h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Author 1](https://google.com)**, **[Author 2](https://google.com)**, and **[Author 3](https://google.com)**</h5> -->
-<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Author 1](https://google.com){target="_blank"}**^$\dagger$^, **[Author 2](https://google.com){target="_blank"}**^$\dagger$^, **[Author 3](https://google.com){target="_blank"}**^$\dagger$^
+<h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Gregory Eady](https://google.com){target="_blank"}**^$\dagger$^ and **[Frido Linder](https://google.com){target="_blank"}**^$\dagger$^
 
 ^$\dagger$^ NYU [Social Media and Political Participation (SMaPP) Lab](https://smappnyu.org/){target="_blank"} & Department of Politics</h5>
 <hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
@@ -313,6 +312,21 @@ fitted_model <- mediascores(Y = User_Domain_Counts, group = Data$group,
                             anchors = c(1, 2))
 ```
 
+```{r eval = FALSE, echo = FALSE}
+# Fit the sharing ideology model
+# anchor = c(1, 2) because column 1 in the matrix represents the NY Times
+# and column 2 Fox News. As a result lower values of theta_i and zeta_m will
+# represent the liberal side of the scale; higher values, the conservative side.
+\system.time{fitted_model <- mediascores(Y = User_Domain_Counts, group = Data$group,
+                            variational = FALSE, user_variance = FALSE,
+                            chains = 4, cores = 4, threads = 4,
+                            warmup = 750, iter = 1500, seed = 1,
+                            open_progress = TRUE,
+                            anchors = c(1, 2))}
+# saveRDS(fitted_model, "data/fitted_models/115Congress_Fitted_Model.rds")
+fitted_model <- readRDS("data/fitted_models/115Congress_Fitted_Model.rds")
+```
+
 # 5. Model Diagnostics {#section5}
 
 The object returned from the `mediascores()` function is a standard [Stan](https://mc-stan.org){target="_blank"} object. For in depth analysis of the posterior, one can therefore treat it as such and use open-source visualization tools to examine it, such as [`shinystan`](https://mc-stan.org/users/interfaces/shinystan){target="_blank"}:
@@ -336,15 +350,13 @@ cat("...\n")
 print(subset(rhats, rownames(rhats) %in% paste0("theta[", (nrow(User_Domain_Counts)-4):nrow(User_Domain_Counts), "]")))}
 ```
 
-The function outputs the $\hat{R}$ statistics for all the specified parameters, and includes a warning for any of those parameters that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. As we can see, for the fitted model, there are 10 values of $\hat{R}$ for the parameters $\zeta_m$ that are greater than 1.1.
-
-We can look at the parameters $\zeta_m$ with values greater than 1.1 as follows:
+The function outputs the $\hat{R}$ statistics for all the specified parameters, and includes a warning for any of those parameters that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. To see if any of our $\hat{R}$ statistics are greater than 1.1 we can simply look at the subset:
 
 ```{r}
 subset(rhats, rhat > 1.1)
 ```
 
-Here, we can see that the parameters for which we have received warnings are just on the edge of the 1.1 threshold. In this case, we might therefore use the estimates as is or, to ensure that all parameters are below the 1.1 threshold, re-run the model using more iterations:
+Here, we can see that none have values greater than 1.1. If we did, however, it is generally suggested that the researcher re-run the model, but collect more post-warmup iterations:
 
 ```{r eval = FALSE}
 # Setting iter = 2000 (not run)
@@ -389,26 +401,26 @@ print(subset(theta_hat, rownames(theta_hat) %in% paste0("theta[", (nrow(User_Dom
 Because these data are ordered as they are in our original data, we can merge them into our politicians dataset and see how news sharing ideology aligns with voting ideology (i.e. NOMINATE scores):
 
 ```{r}
-D$theta_hat <- theta_hat[, "median"]
+Data$theta_hat <- theta_hat[, "median"]
 
 # All politicians
-cor(D$theta_hat, D$nominate, use = "complete.obs")
+round(cor(Data$theta_hat, Data$nominate, use = "complete.obs"), 2)
 
 # Democrats
-cor(D$theta_hat[D$party == "Democrat"], D$nominate[D$party == "Democrat"], use = "complete.obs")
+round(cor(Data$theta_hat[Data$party == "Democrat"], Data$nominate[Data$party == "Democrat"], use = "complete.obs"), 2)
 
 # Republicans
-cor(D$theta_hat[D$party == "Republican"], D$nominate[D$party == "Republican"], use = "complete.obs")
+round(cor(Data$theta_hat[Data$party == "Republican"], Data$nominate[Data$party == "Republican"], use = "complete.obs"), 2)
 ```
 
 We can further graph these estimates as follows:
 
 ```{r echo = FALSE}
-D$role <- factor(D$role, levels = c("Senate", "House", "Governor", "Politician-Other", "Other", "Delegate"))
+Data$role <- factor(Data$role, levels = c("Senate", "House", "Governor", "Politician-Other", "Other", "Delegate"))
 ```
 
 ```{r, eval = FALSE}
-ggplot(subset(D, role %in% c("Senate", "House")),
+ggplot(subset(Data, role %in% c("Senate", "House")),
        aes(x = theta_hat, y = nominate, color = party,
            fill = party, shape = party)) +
   facet_wrap(~ role) +
@@ -421,8 +433,8 @@ ggplot(subset(D, role %in% c("Senate", "House")),
   theme(legend.position = "none")
 ```
 
-```{r, echo = FALSE, out.width = "100%", fig.height = 4, warning = FALSE}
-ggplot(subset(D, role %in% c("Senate", "House")),
+```{r, echo = FALSE, out.width = "100%", fig.height = 3.75, warning = FALSE}
+ggplot(subset(Data, role %in% c("Senate", "House")),
        aes(x = theta_hat, y = nominate, color = party,
            fill = party, shape = party)) +
   my.theme(base_size = 11, borderless = 2,
@@ -445,7 +457,7 @@ We can also examine estimates of the ideology of the news media domains as follo
 zeta_hat <- point_est(fitted_model, "zeta", prob = 0.9)
 
 # Collect the estimates of news media ideology in a data.frame
-M <- data.frame(media_org = colnames(D)[7:(ncol(D)-1)],
+M <- data.frame(media_org = colnames(Data)[7:(ncol(Data)-1)],
                 zeta_hat = zeta_hat[, "median"],
                 zeta_hat_5 = zeta_hat[, "5%"],
                 zeta_hat_95 = zeta_hat[, "95%"])
@@ -524,7 +536,7 @@ CXX14FLAGS += -arch x86_64 -ftemplate-depth-256
 CXX14FLAGS += -DSTAN_THREADS
 ```
 
-On the NYU High-Performance Computing cluster (CentOS 7), the following was added to the `~/.R/Makevars` file:
+On CentOS 7:
 
 ```
 CXX14 = icc
@@ -532,9 +544,6 @@ CXX14FLAGS = -DSTAN_THREADS
 CXX14FLAGS += -O3 -march=native -mtune=native
 CXX14FLAGS += -fPIC
 ```
-
-
-
 
 
 # References
