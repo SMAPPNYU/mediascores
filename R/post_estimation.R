@@ -80,6 +80,7 @@ rhat <- function(posterior,
   }))
 
   out <- data.frame(rhat = rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
+  if (nrow(out) == 1) rownames(out) <- keep_pars
 
   large_rhat <- data.frame(table(gsub("\\[.*", "", rownames(out)[which(out > 1.1)])))
 
