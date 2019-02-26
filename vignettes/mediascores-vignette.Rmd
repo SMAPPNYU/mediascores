@@ -229,7 +229,7 @@ As data, the model uses the number of news media stories that are shared by soci
 First, we read in the `data.frame`, which contains the number of stories that have been tweeted by each politician, in addition to basic identifying information about each actor:
 
 ```{r}
-D <- readRDS("~/GitHub/mediascores/data/115Congress.rds") # Make this local data
+load("~/GitHub/mediascores/data/115Congress.RData") # Make this local data
 ```
 
 The identifying information are contained in the first 6 variables of the data set:
@@ -248,7 +248,7 @@ columns_to_show <- c("name", "thenation.com", "huffingtonpost.com",
                      "washingtonpost.com", "foxnews.com", "breitbart.com")
 politicians_to_show <- c("Ted Cruz", "Paul Ryan", "Susan Collins",
                          "Nancy Pelosi", "Bernie Sanders")
-print(D[D$name %in% politicians_to_show, columns_to_show], row.names = FALSE)
+print(Data[Data$name %in% politicians_to_show, columns_to_show], row.names = FALSE)
 ```
 
 For observers of American politics, these data are as one might expect: Bernie Sanders---a relatively far left politician---shares far more news from the left (e.g. thenation.com, huffingtonpost.com) than he does that from the right (e.g. foxnews.com, breitbart.com). Ted Cruz---a relatively far right politician---by contrast, shares mostly news from the ideological right.
@@ -289,10 +289,10 @@ To fit the model, we use the user-domain count matrix as shown in Section 3. To 
 
 ```{r}
 # Create user-domain count matrix
-User_Domain_Counts <- as.matrix(D[, -c(1:6)])
+User_Domain_Counts <- as.matrix(Data[, -c(1:6)])
 
 # For reference, name rows by politician's name
-rownames(User_Domain_Counts) <- D$name
+rownames(User_Domain_Counts) <- Data$name
 
 # Show sub-matrix of first 5 politicians and 5 domains:
 print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)
@@ -301,19 +301,15 @@ print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)
 We can now fit the model by inputting the user-domain count matrix in the workhorse function of the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library, `mediascores()`, as follows:
 
 ```{r eval = FALSE}
-n_cores <- 4 # Set the number of physical cores on my system (will differ per user)
-options(mc.cores = n_cores)
-Sys.setenv("STAN_NUM_THREADS" = n_cores)
-
 # Fit the sharing ideology model
 # anchor = c(1, 2) because column 1 in the matrix represents the NY Times
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
-fitted_model <- mediascores(Y = User_Domain_Counts, group = D$group,
-                            variational = FALSE, seed = 1,
-                            warmup = 750, iter = 1500, chains = 1,
+fitted_model <- mediascores(Y = User_Domain_Counts, group = Data$group,
+                            variational = FALSE, user_variance = FALSE,
+                            chains = 4, cores = 4, threads = 4,
+                            warmup = 750, iter = 1500, seed = 1,
                             open_progress = TRUE,
-                            # output_samples = 5000, tol_rel_obj = 0.001,
                             anchors = c(1, 2))
 ```
 
@@ -352,10 +348,10 @@ Here, we can see that the parameters for which we have received warnings are jus
 
 ```{r eval = FALSE}
 # Setting iter = 2000 (not run)
-fitted_model <- mediascores(Y = User_Domain_Counts, group = D$group,
-                            variational = FALSE, seed = 1,
+fitted_model <- mediascores(Y = User_Domain_Counts, group = Data$group,
+                            variational = FALSE, user_variance = FALSE,
                             warmup = 750, iter = 2000, chains = 4,
-                            open_progress = TRUE,
+                            open_progress = TRUE, seed = 1,
                             # output_samples = 5000, tol_rel_obj = 0.001,
                             anchors = c(1, 2))
 ```
