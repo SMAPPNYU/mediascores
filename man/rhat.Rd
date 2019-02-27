@@ -5,7 +5,7 @@
 \title{Display Rhat values for the parameters of interest}
 \usage{
 rhat(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
-  "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
+  "zeta_sigma", "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
   "omega_domain", "omega_user"))
 }
 \arguments{
