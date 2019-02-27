@@ -70,7 +70,7 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
   qassert(iter, 'X1')
   qassert(warmup, 'X1') # Can iter be float?
   qassert(refresh, 'X1')
-
+    adsfadsf
   n_row <- nrow(Y)
   n_col <- ncol(Y)
   if (!is.null(group)) {
