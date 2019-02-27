@@ -513,6 +513,7 @@ The <a href="https://cran.r-project.org/package=mediascores" target="_blank"><co
 <p>As data, the model uses the number of news media stories that are shared by social media users. For the purpose of this vignette, we use the stories shared by members of the 115<sup>th</sup> US Congress, US governors, and members of the US executive (e.g. the current and former Presidents). The data come from the time lines of these politicians, which were collected using the Twitter API near the end of 2018. The URLs from each time line were first extracted and unshortened as necessary (e.g. <a href="https://nyti.ms/2BUTshD" target="_blank"><code>nyti.ms/2BUTshD</code></a> —&gt; <a href="https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html" target="_blank"><code>nytimes.com/2018/...</code></a>).<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> The resulting matrix, as described in further detail below, contains all URLs from tweets and retweets (quote-tweets excluded) that linked to national news media.</p>
 <p>First, we read in the <code>data.frame</code>, which contains the number of stories that have been tweeted by each politician, in addition to basic identifying information about each actor:</p>
 <pre class="r"><code>library(mediascores)
+library(ggplot2)
 
 # Read in Twitter URL-sharing data from members of the 115th Congress (among other politicians)
 data(MOC115)</code></pre>
@@ -617,7 +618,7 @@ theta[590] 1.030317</code></pre>
 <pre class="r"><code>subset(rhats, rhat &gt; 1.1)</code></pre>
 <pre><code>[1] rhat
 &lt;0 rows&gt; (or 0-length row.names)</code></pre>
-<p>Here, we can see that none have values greater than 1.1. If we did, however, it is generally suggested that the researcher re-run the model, but collect more post-warmup iterations:</p>
+<p>Here, we can see that none of those parameters have <span class="math inline">\(\hat{R}\)</span> statistics greater than 1.1. If we did, however, it is generally suggested that the model be re-run to collect more post-warmup iterations:</p>
 <pre class="r"><code># Setting iter = 2000 (not run)
 fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             variational = FALSE, user_variance = FALSE,
@@ -628,7 +629,7 @@ fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = MOC115$group,
 <p>For more detail on <span class="math inline">\(\hat{R}\)</span>, see the <a href="https://mc-stan.org/users/documentation/" target="_blank">Stan Modeling Language User Guide and Reference</a>.</p>
 <div id="subsection51" class="section level2">
 <h2>5.1 Divergent transitions</h2>
-<p>If you receive a message stating that there were “divergent transitions” during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but it can typically be resolved by increasing the value of the <code>adapt_delta</code>, which can be included in the <code>mediascores()</code> function as follows: <code>mediascores(..., control = list(adapt_delta = 0.99))</code>. The default value is 0.8 (with a maximum less than 1). Values of 0.99 or 0.999 typically resolve the problem, however, note that increasing the value of <code>adapt_delta</code> can substantially increase the time for model fitting, which is computationally demanding as is, especially with relatively large datasets. In practice, we have fortunately not yet run into this problem.</p>
+<p>If you receive a message stating that there were “divergent transitions” during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but it can typically be resolved by increasing the value of the <code>adapt_delta</code>, which can be included in the <code>mediascores()</code> function as follows: <code>mediascores(..., control = list(adapt_delta = 0.99))</code>. The default value is 0.8 (with a maximum less than 1). Values of 0.99 or 0.999 typically resolve the problem. However, note that increasing the value of <code>adapt_delta</code> can substantially increase the time for model fitting, which is computationally demanding as is, especially with relatively large datasets. In practice for the model presented in this library, this problem appears to be rare (we have yet to encounter it).</p>
 </div>
 <div id="subsection52" class="section level2">
 <h2>5.2 Maximum treedepth exceeded</h2>

@@ -19,7 +19,12 @@ params:
 ---
  
 <!--
+To build:
+Anywhere there is a comment "SET TO EVAL = TRUE TO BUILD VIGNETTE", set that R code block to "eval = TRUE", then run:
+
 rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
+
+To submit changes to GitHub or CRAN, however, RESET eval in those cases to "eval = FALSE"
 -->
 
 
@@ -133,7 +138,6 @@ rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
 options(width = 10000)
 knitr::opts_chunk$set(comment = "")
 set.seed(121)
-library(ggplot2)
 my.theme <- function(base_size = 10, base_family = "",
                      remove.ticks.x = FALSE,
                      remove.ticks.y = FALSE,
@@ -230,6 +234,7 @@ First, we read in the `data.frame`, which contains the number of stories that ha
 
 ```{r}
 library(mediascores)
+library(ggplot2)
 
 # Read in Twitter URL-sharing data from members of the 115th Congress (among other politicians)
 data(MOC115)
@@ -327,7 +332,7 @@ system.time({fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$
                             warmup = 750, iter = 1500, seed = 1,
                             open_progress = TRUE,
                             anchors = c(1, 2))})
-# saveRDS(fitted_model, "data/fitted_models/MOC115_Fitted_Model.rds")
+# saveRDS(fitted_model, "data/fitted_models/MOC115_fitted_model.rds")
 ```
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
@@ -369,7 +374,7 @@ The function outputs the $\hat{R}$ statistics for all the specified parameters, 
 subset(rhats, rhat > 1.1)
 ```
 
-Here, we can see that none have values greater than 1.1. If we did, however, it is generally suggested that the researcher re-run the model, but collect more post-warmup iterations:
+Here, we can see that none of those parameters have $\hat{R}$ statistics greater than 1.1. If we did, however, it is generally suggested that the model be re-run to collect more post-warmup iterations:
 
 ```{r eval = FALSE}
 # Setting iter = 2000 (not run)
@@ -386,7 +391,7 @@ For more detail on $\hat{R}$, see the [Stan Modeling Language User Guide and Ref
 
 ## 5.1 Divergent transitions {#subsection51}
 
-If you receive a message stating that there were "divergent transitions" during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but it can typically be resolved by increasing the value of the `adapt_delta`, which can be included in the `mediascores()` function as follows: `mediascores(..., control = list(adapt_delta = 0.99))`. The default value is 0.8 (with a maximum less than 1). Values of 0.99 or 0.999 typically resolve the problem, however, note that increasing the value of `adapt_delta` can substantially increase the time for model fitting, which is computationally demanding as is, especially with relatively large datasets. In practice, we have fortunately not yet run into this problem.
+If you receive a message stating that there were "divergent transitions" during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but it can typically be resolved by increasing the value of the `adapt_delta`, which can be included in the `mediascores()` function as follows: `mediascores(..., control = list(adapt_delta = 0.99))`. The default value is 0.8 (with a maximum less than 1). Values of 0.99 or 0.999 typically resolve the problem. However, note that increasing the value of `adapt_delta` can substantially increase the time for model fitting, which is computationally demanding as is, especially with relatively large datasets. In practice for the model presented in this library, this problem appears to be rare (we have yet to encounter it).
 
 ## 5.2 Maximum treedepth exceeded {#subsection52}
 
