@@ -206,8 +206,8 @@ my.theme <- function(base_size = 10, base_family = "",
 
 <!-- BEGIN DOCUMENT -->
 
-<h1 style = "font-size: 32px; margin-bottom: 0px; padding-bottom:0px;">Computing news-sharing ideology with social media URL data</h1>
-<h2 style = "font-size: 26px; margin-top: 15px">The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library in R</h2>
+<h1 style = "font-size: 28px; margin-bottom: 0px; padding-bottom:0px;">News-sharing Ideology from Social Media Link Data</h1>
+<h2 style = "font-size: 24px; margin-top: 15px">The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library in R</h2>
 <h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Gregory Eady](https://google.com){target="_blank"}**^$\dagger$^ and **[Fridolin Linder](https://google.com){target="_blank"}**^$\dagger$^
 
 ^$\dagger$^ NYU [Social Media and Political Participation (SMaPP) Lab](https://smappnyu.org/){target="_blank"} & Department of Politics</h5>
