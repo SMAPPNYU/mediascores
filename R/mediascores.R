@@ -49,7 +49,7 @@
 mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
                         variational = FALSE, chains = 4,
                         cores = getOption("mc.cores", 1L), threads = cores,
-                        iter = 2000, warmup = iter/2, refresh = 50,
+                        iter = 2000, warmup = floor(iter/2), refresh = 50,
                         ...) {
     
   # Check user inputs
@@ -68,9 +68,9 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
   qassert(cores, 'X1')
   qassert(threads, 'X1')
   qassert(iter, 'X1')
-  qassert(warmup, 'X1') # Can iter be float?
+  qassert(warmup, 'X1')
   qassert(refresh, 'X1')
-    adsfadsf
+
   n_row <- nrow(Y)
   n_col <- ncol(Y)
   if (!is.null(group)) {

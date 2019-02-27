@@ -6,7 +6,8 @@
 \usage{
 mediascores(Y, group = NULL, anchors, user_variance = FALSE,
   variational = FALSE, chains = 4, cores = getOption("mc.cores", 1L),
-  threads = cores, iter = 2000, warmup = iter/2, refresh = 50, ...)
+  threads = cores, iter = 2000, warmup = floor(iter/2),
+  refresh = 50, ...)
 }
 \arguments{
 \item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
