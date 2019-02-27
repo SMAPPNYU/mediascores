@@ -10,7 +10,7 @@
 * Release on cran
 * Wait until released
 * Create Github tag
-* Set version number to devel in DESCRIPTION
+* Set version number to devel in DESCRIPTION (e.g. 0.0.1.9000)
 * Set version number to devel in R/zzz.R
 * Update News with devel version 
 * Push to github

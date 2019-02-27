@@ -1,11 +1,9 @@
 Package: mediascores
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com")
+Authors@R: c(person("Gregory", "Eady", email = "gregory.eady@gmail.com",
+                  role = c("aut", "cre")),
+             person("Fridolin", "Linder", role = "ctb"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Depends: 
