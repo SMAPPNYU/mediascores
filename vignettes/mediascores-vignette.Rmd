@@ -435,11 +435,6 @@ round(cor(MOC115$theta_hat[MOC115$party == "Republican"], MOC115$nominate[MOC115
 
 We can further graph these estimates as follows:
 
-<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r echo = FALSE, eval = FALSE}
-MOC115$role <- factor(MOC115$role, levels = c("Senate", "House", "Governor", "Politician-Other", "Other", "Delegate"))
-```
-
 ```{r, eval = FALSE}
 ggplot(subset(MOC115, role %in% c("Senate", "House")),
        aes(x = theta_hat, y = nominate, color = party,
