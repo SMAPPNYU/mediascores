@@ -64,13 +64,28 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
   model_data <- list(N = n_row, M = n_col, G = n_groups,
                      group = group, Y = Y, anchors = anchors)
 
+  pars_to_include <- c("theta", "theta_mu", "theta_sigma",
+                       "zeta", "zeta_sigma",
+                       "alpha", "alpha_mu", "alpha_sigma",
+                       "gamma", "gamma_sigma",
+                       "omega_domain",
+                       "omega_domain_a", "omega_domain_b")
+
+  if(user_variance) pars_to_include <- c(pars_to_include,
+                                         "omega_user",
+                                         "omega_user_a", "omega_user_b")
+
   if (variational) {
     if(user_variance) {
       posterior <- rstan::vb(stanmodels$mediascores_vb,
-                             data = model_data, ...)
+                             data = model_data, include = TRUE,
+                             pars = pars_to_include, 
+                             ...)
     } else {
       posterior <- rstan::vb(stanmodels$mediascores_domain_vb,
-                             data = model_data, ...)
+                             data = model_data, include = TRUE,
+                             pars = pars_to_include,
+                             ...)
     }
   } else {
 
@@ -81,13 +96,17 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
                                    chains = chains, cores = cores,
                                    warmup = warmup, iter = iter,
                                    refresh = refresh,
-                                   data = model_data, ...)
+                                   data = model_data, include = TRUE,
+                                   pars = ,
+                                   ...)
     } else {
       posterior <- rstan::sampling(stanmodels$mediascores_domain,
                                    chains = chains, cores = cores,
                                    warmup = warmup, iter = iter,
                                    refresh = refresh,
-                                   data = model_data, ...)
+                                   data = model_data, include = TRUE,
+                                   pars = pars_to_include,
+                                   ...)
     }
   }
 

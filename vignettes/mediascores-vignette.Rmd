@@ -326,12 +326,12 @@ fitted_model <- readRDS("~/GitHub/mediascores/data/fitted_models/MOC115_fitted_m
 # anchor = c(1, 2) because column 1 in the matrix represents the NY Times
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
-\system.time{fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$group,
+system.time({fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             variational = FALSE, user_variance = FALSE,
                             chains = 4, cores = 4, threads = 4,
                             warmup = 750, iter = 1500, seed = 1,
                             open_progress = TRUE,
-                            anchors = c(1, 2))}
+                            anchors = c(1, 2))})
 # saveRDS(fitted_model, "data/fitted_models/MOC115_Fitted_Model.rds")
 ```
 
