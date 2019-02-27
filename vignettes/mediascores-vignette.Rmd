@@ -316,11 +316,6 @@ fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             anchors = c(1, 2))
 ```
 
-```{r echo = FALSE}
-# This is a _local_ file for the vignette only
-fitted_model <- readRDS("~/GitHub/mediascores/data/fitted_models/MOC115_fitted_model.rds")
-```
-
 ```{r eval = FALSE, echo = FALSE}
 # Fit the sharing ideology model
 # anchor = c(1, 2) because column 1 in the matrix represents the NY Times
@@ -334,6 +329,14 @@ system.time({fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$
                             anchors = c(1, 2))})
 # saveRDS(fitted_model, "data/fitted_models/MOC115_Fitted_Model.rds")
 ```
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = FALSE}
+# This is a _local_ file for the vignette only
+fitted_model <- readRDS("~/GitHub/mediascores/data/fitted_models/MOC115_fitted_model.rds")
+```
+
+
 
 # 5. Model Diagnostics {#section5}
 
@@ -360,7 +363,8 @@ print(subset(rhats, rownames(rhats) %in% paste0("theta[", (nrow(User_Domain_Coun
 
 The function outputs the $\hat{R}$ statistics for all the specified parameters, and includes a warning for any of those parameters that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. To see if any of our $\hat{R}$ statistics are greater than 1.1 we can simply look at the subset:
 
-```{r}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = FALSE}
 subset(rhats, rhat > 1.1)
 ```
 
@@ -408,7 +412,8 @@ print(subset(theta_hat, rownames(theta_hat) %in% paste0("theta[", (nrow(User_Dom
 
 Because these data are ordered as they are in our original data, we can merge them into our politicians dataset and see how news sharing ideology aligns with voting ideology (i.e. NOMINATE scores):
 
-```{r}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = FALSE}
 MOC115$theta_hat <- theta_hat[, "median"]
 
 # All politicians
@@ -423,7 +428,8 @@ round(cor(MOC115$theta_hat[MOC115$party == "Republican"], MOC115$nominate[MOC115
 
 We can further graph these estimates as follows:
 
-```{r echo = FALSE}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = FALSE}
 MOC115$role <- factor(MOC115$role, levels = c("Senate", "House", "Governor", "Politician-Other", "Other", "Delegate"))
 ```
 
@@ -441,7 +447,8 @@ ggplot(subset(MOC115, role %in% c("Senate", "House")),
   theme(legend.position = "none")
 ```
 
-```{r, echo = FALSE, out.width = "100%", fig.height = 3.75, warning = FALSE}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, echo = FALSE, out.width = "100%", fig.height = 3.75, warning = FALSE, eval = FALSE}
 ggplot(subset(MOC115, role %in% c("Senate", "House")),
        aes(x = theta_hat, y = nominate, color = party,
            fill = party, shape = party)) +
@@ -461,7 +468,8 @@ ggplot(subset(MOC115, role %in% c("Senate", "House")),
 
 We can also examine estimates of the ideology of the news media domains as follows:
 
-```{r}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = FALSE}
 zeta_hat <- point_est(fitted_model, "zeta", prob = 0.9)
 
 # Collect the estimates of news media ideology in a data.frame
@@ -502,7 +510,8 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 ```
 
 
-```{r, echo = FALSE, fig.height = 15, out.width = "100%", warning = FALSE}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, echo = FALSE, fig.height = 15, out.width = "100%", warning = FALSE, eval = FALSE}
 M$label <- "right"
 M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
 
