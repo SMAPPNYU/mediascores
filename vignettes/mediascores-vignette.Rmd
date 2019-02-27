@@ -321,7 +321,7 @@ fitted_model <- mediascores(Y = User_Domain_Counts, group = MOC115$group,
                             anchors = c(1, 2))
 ```
 
-```{r eval = FALSE, echo = FALSE}
+```{r echo = FALSE, eval = FALSE}
 # Fit the sharing ideology model
 # anchor = c(1, 2) because column 1 in the matrix represents the NY Times
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
