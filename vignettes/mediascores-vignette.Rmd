@@ -404,7 +404,8 @@ theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
 print(theta_hat)
 ```
 
-```{r echo = FALSE}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = FALSE}
 theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
 {print(subset(theta_hat, rownames(theta_hat) %in% c("theta[1]", "theta[2]", "theta[3]", "theta[4]", "theta[5]")))
 cat("...\n")

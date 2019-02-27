@@ -641,6 +641,7 @@ fitted_model &lt;- mediascores(Y = User_Domain_Counts, group = MOC115$group,
 <p>To pull out these estimates, we can use the <code>point_est()</code> function, which calculates the median of the posterior of each parameter of interest, and provides credible intervals:</p>
 <pre class="r"><code>theta_hat &lt;- point_est(fitted_model, pars = c(&quot;theta&quot;), prob = 0.9)
 print(theta_hat)</code></pre>
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
 <pre><code>            median        5%       95%
 theta[1] 1.1451444 0.9358276 1.3629377
 theta[2] 1.1241241 0.9114377 1.3343389
