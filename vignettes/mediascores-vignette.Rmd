@@ -354,7 +354,8 @@ rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
 print(rhats)
 ``` 
 
-```{r echo = FALSE}
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = FALSE}
 rhats <- rhat(posterior = fitted_model, pars = c("theta", "zeta"))
 {print(subset(rhats, rownames(rhats) %in% c("zeta[1]", "zeta[2]", "zeta[3]", "zeta[4]", "zeta[5]")))
 cat("...\n")

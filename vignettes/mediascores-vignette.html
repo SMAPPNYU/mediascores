@@ -598,6 +598,7 @@ shiny_stan(fitted_model)</code></pre>
 <p>Here, we focus on a simple helper function built into the <a href="https://cran.r-project.org/package=mediascores" target="_blank"><code>mediascores</code></a> library to access the convergence statistic, <span class="math inline">\(\hat{R}\)</span>, which is the commonly used means of assessing whether one’s parameters of interest have converged. We can use the <code>rhat()</code> function to display the <span class="math inline">\(\hat{R}\)</span> statistic for the two typical quantities of interest, <span class="math inline">\(\vartheta_i\)</span> (the sharing ideology of users), and <span class="math inline">\(\zeta_m\)</span> (the ideology of news media domains):</p>
 <pre class="r"><code>rhats &lt;- rhat(posterior = fitted_model, pars = c(&quot;zeta&quot;, &quot;theta&quot;))
 print(rhats)</code></pre>
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
 <pre><code>            rhat
 zeta[1] 1.037810
 zeta[2] 1.043473
