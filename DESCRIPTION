@@ -1,10 +1,12 @@
 Package: mediascores
-Title: What the Package Does (One Line, Title Case)
+Title: News-sharing Ideology from Social Media Link Data
 Version: 0.0.0.9000
 Authors@R: c(person("Gregory", "Eady", email = "gregory.eady@gmail.com",
                   role = c("aut", "cre")),
-             person("Fridolin", "Linder", role = "ctb"))
-Description: What the package does (one paragraph).
+             person("Fridolin", "Linder", role = c("aut", "ctb")))
+Date: 2019-03-01
+URL: https://cran.r-project.org/web/packages/mediascores/index.html
+Description: Enables the examination of political communication on social media by using news stories shared on social media (via URLs) to estimate the news-sharing ideology of politicians and users, and the ideology of the content that they share.
 License: MIT + file LICENSE
 Depends: 
     methods,
