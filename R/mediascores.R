@@ -4,6 +4,8 @@
 #' 
 #' [TODO: FILL IN MODEL DETAILS HERE]
 #' 
+#' @import checkmate
+#' 
 #' @param Y matrix or dataframe of dimension (n_user x n_domains) containing 
 #'      counts of how often each user (row) shared a given domain (column). No 
 #'      missing data is permitted.
@@ -49,6 +51,25 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
                         cores = getOption("mc.cores", 1L), threads = cores,
                         iter = 2000, warmup = iter/2, refresh = 50,
                         ...) {
+    
+  # Check user inputs
+  assert(
+    check_data_frame(Y, any.missing = FALSE, min.rows = 2,
+                     min.cols = 2),
+    check_matrix(Y, any.missing = FALSE, min.rows = 2,
+                 min.cols = 2)
+  )
+  assert_integerish(group, any.missing = FALSE, len = nrow(Y),
+                    null.ok = TRUE)
+  qassert(anchors, 'X2')
+  qassert(user_variance, 'B1')
+  qassert(variational, 'B1')
+  qassert(chains, 'X1')
+  qassert(cores, 'X1')
+  qassert(threads, 'X1')
+  qassert(iter, 'X1')
+  qassert(warmup, 'X1') # Can iter be float?
+  qassert(refresh, 'X1')
 
   n_row <- nrow(Y)
   n_col <- ncol(Y)
