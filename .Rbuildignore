@@ -10,3 +10,4 @@ release_checklist.md
 ^revdep$
 netinf_benchmark.R
 vignettes/*_cache/
+data/fitted_models

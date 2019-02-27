@@ -13,8 +13,9 @@
 # RStudio files
 .Rproj.user/
 *.Rproj
+# Local data for vignettes
+data/fitted_models/
 # produced vignettes
-vignettes/*.html
 vignettes/*.pdf
 vignettes/*_cache/
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
