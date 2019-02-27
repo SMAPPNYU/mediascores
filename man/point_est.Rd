@@ -12,7 +12,9 @@ point_est(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
 \arguments{
 \item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
 
-\item{pars}{[TODO: FILL IN].}
+\item{pars}{[TODO: FILL IN]. Document the parameter selection syntax. If 
+too long for the argument documentation refer to details section and 
+explain there}
 
 \item{prob}{[TODO: FILL IN].}
 }

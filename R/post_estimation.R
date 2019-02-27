@@ -6,7 +6,9 @@
 #' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
 #' 
 #' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars [TODO: FILL IN].
+#' @param pars [TODO: FILL IN]. Document the parameter selection syntax. If 
+#'     too long for the argument documentation refer to details section and 
+#'     explain there
 #' @param prob [TODO: FILL IN].
 #'     
 #' @return
@@ -78,20 +80,26 @@ rhat <- function(posterior,
   pars_grep <- gsub("\\[", "\\\\[", pars)
   pars_grep <- gsub("\\]", "\\\\]", pars_grep)
   keep_pars <- unlist(sapply(pars_grep, function(x) {
-      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE, perl = TRUE)
+      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE, 
+           perl = TRUE)
   }))
 
-  out <- data.frame(rhat = rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
+  out <- data.frame(
+      rhat = rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
   if (nrow(out) == 1) rownames(out) <- keep_pars
 
-  large_rhat <- data.frame(table(gsub("\\[.*", "", rownames(out)[which(out > 1.1)])))
+  large_rhat <- data.frame(table(gsub("\\[.*", "", 
+                                      rownames(out)[which(out > 1.1)])))
 
   # Warning message
   if (nrow(large_rhat) > 0) {
     warning_message <- ""
     for(i in 1:nrow(large_rhat)) {
-      warning_message <- paste0(warning_message, large_rhat[i, 2], " Rhat values of ", large_rhat[i, 1], " are greater than 1.1")
-      if(i < nrow(large_rhat)) warning_message <- paste0(warning_message, "\n  ")
+      warning_message <- paste0(warning_message, large_rhat[i, 2], 
+                                " Rhat values of ", large_rhat[i, 1], 
+                                " are greater than 1.1")
+      if(i < nrow(large_rhat)) warning_message <- paste0(warning_message, 
+                                                         "\n  ")
     }
     warning(warning_message)
   }
