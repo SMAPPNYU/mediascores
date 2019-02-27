@@ -69,9 +69,11 @@ point_est <- function(posterior,
 #' }
 #' @export
 rhat <- function(posterior,
-                 pars = c("theta", "theta_mu", "theta_sigma", "zeta",
-                          "alpha", "alpha_mu", "alpha_sigma", "gamma", 
-                          "gamma_sigma", "omega_domain", "omega_user")) {
+                 pars = c("theta", "theta_mu", "theta_sigma",
+                          "zeta", "zeta_sigma",
+                          "alpha", "alpha_mu", "alpha_sigma",
+                          "gamma", "gamma_sigma",
+                          "omega_domain", "omega_user")) {
 
   pars_grep <- gsub("\\[", "\\\\[", pars)
   pars_grep <- gsub("\\]", "\\\\]", pars_grep)
