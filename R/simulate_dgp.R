@@ -1,8 +1,20 @@
-#' Simulate data according to the media score model's data generating process
+#' Simulate data from the model's data-generating process
 #' 
-#' [TODO: EXTENDED HEADER]
+#' \code{simulate_data} simulates data according to the data-generating process
+#' defined by the model.
 #' 
-#' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
+#' @section Model details:
+#' 
+#' The data-generating process is defined as the following:
+#' 
+#' \deqn{NegBin(\pi_{img}, \omega_i\omega_m)}
+#' \deqn{\pi_{img} = \alpha_i + \gamma_m - ||\vartheta_i - \zeta_m||^2,}
+#' 
+#' where \eqn{\alpha_i} denotes a user-level intercept; \eqn{\gamma_m}, a news
+#' media domain intercept; \eqn{\vartheta_i} the sharing-ideology of user
+#' \eqn{i}; \eqn{zeta_m} the ideology of news media domain \eqn{m}; and
+#' \eqn{\omega_i} and \eqn{\omega_m}, user- and domain-level variance parameters.
+#' Further details regarding can be found in the library's vignette.
 #' 
 #' @param n_users, int, number of users in the data
 #' @param n_domains, int, number of domains that users can share
@@ -11,8 +23,8 @@
 #'     probability of a user belonging to each of the groups
 #' @param user_variance, logical, whether to fit the model with an additional 
 #'     variance parameter per user (i.e. omega_user)
-#' @param params, list containing complete (or partial) parameters of the model 
-#'     distributions. See Details section for more information.
+#' @param params, list containing complete (or partial) list of parameter values
+#'     of the model. See Details section for more information.
 #' 
 #' @return 
 #' Returns a list with elements:
@@ -33,6 +45,10 @@
 #'             ideology of each user
 #'         \item \code{'zeta'}: Numeric vector of length \code{n_domains},
 #'             ideology of each domain
+#'         \item \code{'omega_domain'}: Numeric vector of length \code{n_domains},
+#'             variance parameter for domain
+#'         \item \code{'omega_user'}: Numeric vector of length \code{n_users},
+#'             variance parameter for each user
 #'     }
 #' }
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulate_dgp.R
 \name{simulate_data}
 \alias{simulate_data}
-\title{Simulate data according to the media score model's data generating process}
+\title{Simulate data from the model's data-generating process}
 \usage{
 simulate_data(n_users = 200, n_domains = 500, n_groups = 2,
   group_prob = c(0.4, 0.6), user_variance = FALSE,
@@ -23,8 +23,8 @@ probability of a user belonging to each of the groups}
 \item{user_variance, }{logical, whether to fit the model with an additional 
 variance parameter per user (i.e. omega_user)}
 
-\item{params, }{list containing complete (or partial) parameters of the model 
-distributions. See Details section for more information.}
+\item{params, }{list containing complete (or partial) list of parameter values
+of the model. See Details section for more information.}
 }
 \value{
 Returns a list with elements:
@@ -45,15 +45,32 @@ Returns a list with elements:
             ideology of each user
         \item \code{'zeta'}: Numeric vector of length \code{n_domains},
             ideology of each domain
+        \item \code{'omega_domain'}: Numeric vector of length \code{n_domains},
+            variance parameter for domain
+        \item \code{'omega_user'}: Numeric vector of length \code{n_users},
+            variance parameter for each user
     }
 }
 }
 \description{
-[TODO: EXTENDED HEADER]
+\code{simulate_data} simulates data according to the data-generating process
+defined by the model.
 }
-\details{
-[TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
+\section{Model details}{
+
+
+The data-generating process is defined as the following:
+
+\deqn{NegBin(\pi_{img}, \omega_i\omega_m)}
+\deqn{\pi_{img} = \alpha_i + \gamma_m - ||\vartheta_i - \zeta_m||^2,}
+
+where \eqn{\alpha_i} denotes a user-level intercept; \eqn{\gamma_m}, a news
+media domain intercept; \eqn{\vartheta_i} the sharing-ideology of user
+\eqn{i}; \eqn{zeta_m} the ideology of news media domain \eqn{m}; and
+\eqn{\omega_i} and \eqn{\omega_m}, user- and domain-level variance parameters.
+Further details regarding can be found in the library's vignette.
 }
+
 \examples{
 simulated_data <- simulate_data() 
 

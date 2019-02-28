@@ -15,7 +15,7 @@
 #' where \eqn{\alpha_i} denotes a user-level intercept; \eqn{\gamma_m}, a news
 #' media domain intercept; \eqn{\vartheta_i} the sharing-ideology of user
 #' \eqn{i}; \eqn{zeta_m} the ideology of news media domain \eqn{m}; and
-#' \eqn{\omega_i} and \eqn{\omega_m}, user- and domain-level variance paramters.
+#' \eqn{\omega_i} and \eqn{\omega_m}, user- and domain-level variance parameters.
 #' Details regarding the priors for these parameters are discussed in the
 #' library's vignette. A group-specific common prior distribution can be placed
 #' on users' news-sharing ideology parameters \eqn{\vartheta_i} through the

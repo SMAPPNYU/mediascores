@@ -1,9 +1,9 @@
 # Check if requested parameters are available in posterior object
 #
-# See `point_est` and `rhat` for argument documentation.
+# See \code{point_est} and \code{rhat} for argument documentation.
 #
-# Returns list of all valid requested parameters. If pars is NULL
-# it returns all parameters
+# Returns a list of all valid requested parameters. If pars is \code{NULL}
+# it returns all parameters.
 check_parameters <- function(posterior, pars) {
   assert_class(posterior, 'stanfit')
   if(is.null(pars)) {
