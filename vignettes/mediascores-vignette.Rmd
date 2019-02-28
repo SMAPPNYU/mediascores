@@ -546,7 +546,7 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 
 # 7. A Note on CPU Parallelization {#section7}
 
-The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. The upshot is that you can use many CPU cores for model fitting, and thus _substantially_ cut down on estimation time. This is especially useful even for medium-sized data sets, because the model is computationally demanding.
+The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. The upshot is that you can use many CPU cores for model fitting, and thus _substantially_ cut down on estimation time. This is especially useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated above (using data in a 590 x 152 matrix), took roughly three and a half hours to fit. On a 20-core computer with parallelization turn on, model fitting took less than an hour.
 
 To enable within-chain parallelization^[Between-chain parallelization is enabled by default.] requires that the C++ code compiled during the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library's installation be done using flags to turn it on. The process to do this varies from system to system (e.g. Windows, Unix, Mac), but is not overly difficult.
 

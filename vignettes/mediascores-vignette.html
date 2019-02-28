@@ -375,7 +375,7 @@ $(document).ready(function () {
 
 <!--
 To build:
-Anywhere there is a comment "SET TO EVAL = TRUE TO BUILD VIGNETTE", set that R code block to "eval = TRUE", then run:
+Anywhere there is a comment "SET TO EVAL = TRUE TO BUILD VIGNETTE", set that R code block to "eval = TRUE", then FALSE
 
 rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
 
@@ -729,7 +729,7 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 </div>
 <div id="section7" class="section level1">
 <h1>7. A Note on CPU Parallelization</h1>
-<p>The <a href="https://cran.r-project.org/package=mediascores" target="_blank"><code>mediascores</code></a> library is coded using map-reduce to permit within-chain CPU parallelization. The upshot is that you can use many CPU cores for model fitting, and thus <em>substantially</em> cut down on estimation time. This is especially useful even for medium-sized data sets, because the model is computationally demanding.</p>
+<p>The <a href="https://cran.r-project.org/package=mediascores" target="_blank"><code>mediascores</code></a> library is coded using map-reduce to permit within-chain CPU parallelization. The upshot is that you can use many CPU cores for model fitting, and thus <em>substantially</em> cut down on estimation time. This is especially useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated above (using data in a 590 x 152 matrix), took roughly three and a half hours to fit. On a 20-core computer with parallelization turn on, model fitting took less than an hour.</p>
 <p>To enable within-chain parallelization<a href="#fn5" class="footnote-ref" id="fnref5"><sup>5</sup></a> requires that the C++ code compiled during the <a href="https://cran.r-project.org/package=mediascores" target="_blank"><code>mediascores</code></a> library’s installation be done using flags to turn it on. The process to do this varies from system to system (e.g. Windows, Unix, Mac), but is not overly difficult.</p>
 <p>For example, enabling parallelization on the systems to which the author has access required only that the following be added to the <code>~/.R/Makevars</code> file (create this file if it does not exist):</p>
 <p>On Mac OS (10.14.3):</p>
