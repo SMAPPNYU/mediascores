@@ -10,14 +10,14 @@ mediascores(Y, group = NULL, anchors, user_variance = FALSE,
   refresh = 50, ...)
 }
 \arguments{
-\item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
-counts of how often each user (row) shared a given domain (column). No 
+\item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing
+counts of how often each user (row) shared a given domain (column). No
 missing data is permitted.}
 
-\item{group}{vector of length \code{n_users} indicating group membership of 
+\item{group}{vector of length \code{n_users} indicating group membership of
 each user. If \code{NULL} every user is assigned to the same group.}
 
-\item{anchors}{vector of length 2 indicating index/column position of the 
+\item{anchors}{vector of length 2 indicating index/column position of the
 anchor domains.}
 
 \item{user_variance}{logical, whether to include a variance parameter for
@@ -25,8 +25,8 @@ each user (omega_i). Note that doing so makes the model more
 computationally demanding and there is typically too few data to identify
 these parameters.}
 
-\item{variational}{logical, should variational inference be used 
-(\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
+\item{variational}{logical, should variational inference be used
+(\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling
 (\code{rstan::\link[rstan]{sampling}}) is used.}
 
 \item{chains}{integer, the number of Markov chains to run. The default is 4.}
@@ -48,12 +48,14 @@ Defaults to iter/2.}
 progress on each chain is displayed.}
 
 \item{...}{arguments passed to \code{rstan::\link[rstan]{sampling}}
-(for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
+(for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}}
 (for \code{variational = FALSE})}
 }
 \value{
-An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
-representing the fitted results.
+An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}})
+representing the fitted results. You can use \code{\link{point_est}} and
+\code{\link{rhat}} to extract point estimates and rhat values for the
+posterior object.
 }
 \description{
 [TODO: EXTENDED HEADER FILL IN]
@@ -64,7 +66,7 @@ representing the fitted results.
 \examples{
 \dontrun{
 sim_data <- simulate_data(200, 500)
-posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors,
                          variational = FALSE, chains = 2)
 }
 }

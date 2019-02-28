@@ -1,24 +1,24 @@
 #' Estimate the mediascores model
-#' 
+#'
 #' [TODO: EXTENDED HEADER FILL IN]
-#' 
+#'
 #' [TODO: FILL IN MODEL DETAILS HERE]
-#' 
+#'
 #' @import checkmate
-#' 
-#' @param Y matrix or dataframe of dimension (n_user x n_domains) containing 
-#'      counts of how often each user (row) shared a given domain (column). No 
+#'
+#' @param Y matrix or dataframe of dimension (n_user x n_domains) containing
+#'      counts of how often each user (row) shared a given domain (column). No
 #'      missing data is permitted.
-#' @param group vector of length \code{n_users} indicating group membership of 
+#' @param group vector of length \code{n_users} indicating group membership of
 #'     each user. If \code{NULL} every user is assigned to the same group.
-#' @param anchors vector of length 2 indicating index/column position of the 
+#' @param anchors vector of length 2 indicating index/column position of the
 #'     anchor domains.
 #' @param user_variance logical, whether to include a variance parameter for
 #'     each user (omega_i). Note that doing so makes the model more
 #'     computationally demanding and there is typically too few data to identify
 #'     these parameters.
-#' @param variational logical, should variational inference be used 
-#'     (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
+#' @param variational logical, should variational inference be used
+#'     (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling
 #'     (\code{rstan::\link[rstan]{sampling}}) is used.
 #' @param chains integer, the number of Markov chains to run. The default is 4.
 #' @param cores integer, the number of cores to use when running chains in
@@ -33,25 +33,28 @@
 #' @param refresh integer, the number of iterations per chain before sampling
 #'     progress on each chain is displayed.
 #' @param ... arguments passed to \code{rstan::\link[rstan]{sampling}}
-#'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
+#'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}}
 #'     (for \code{variational = FALSE})
-#' @return 
-#' An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
-#' representing the fitted results.
-#' 
+#'
+#' @return
+#' An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}})
+#' representing the fitted results. You can use \code{\link{point_est}} and
+#' \code{\link{rhat}} to extract point estimates and rhat values for the
+#' posterior object.
+#'
 #' @examples
 #' \dontrun{
 #' sim_data <- simulate_data(200, 500)
-#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors,
 #'                          variational = FALSE, chains = 2)
 #' }
 #' @export
-mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
+mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
                         variational = FALSE, chains = 4,
                         cores = getOption("mc.cores", 1L), threads = cores,
                         iter = 2000, warmup = floor(iter/2), refresh = 50,
                         ...) {
-    
+
   # Check user inputs
   assert(
     check_data_frame(Y, any.missing = FALSE, min.rows = 2,
@@ -100,7 +103,7 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
     if(user_variance) {
       posterior <- rstan::vb(stanmodels$mediascores_vb,
                              data = model_data, include = TRUE,
-                             pars = pars_to_include, 
+                             pars = pars_to_include,
                              ...)
     } else {
       posterior <- rstan::vb(stanmodels$mediascores_domain_vb,
