@@ -4,9 +4,7 @@
 \alias{rhat}
 \title{Display Rhat values for the parameters of interest}
 \usage{
-rhat(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
-  "zeta_sigma", "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
-  "omega_domain", "omega_user"))
+rhat(posterior, pars)
 }
 \arguments{
 \item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
@@ -26,8 +24,8 @@ argument
 \examples{
 \dontrun{
 simulated_data <- simulate_data()
-posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
-                         anchors = simulated_data$anchors, 
+posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group,
+                         anchors = simulated_data$anchors,
                          variational = TRUE)
 rhat(posterior, pars = c("theta", "zeta"))
 }

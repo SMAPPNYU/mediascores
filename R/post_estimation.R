@@ -1,3 +1,31 @@
+# Check if requested parameters are available in posterior object
+#
+# See `poit_est` and `rhat` for argument documentation.
+# @return Returns list of all valid requested parameters
+check_parameters <- function(posterior, pars) {
+  assert_class(posterior, 'stanfit')
+
+  # Check if all parameter names passed in pars are available in the model
+  # and extract the available parameters
+  pars_grep <- gsub("\\[", "\\\\[", pars)
+  pars_grep <- gsub("\\]", "\\\\]", pars_grep)
+  keep_pars <- sapply(pars_grep, function(x) {
+      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE)
+  })
+  for(name in names(keep_pars)) {
+    if(length(keep_pars[[name]]) == 0) {
+      warning(paste0('Requested parameter "', name, '" not in posterior.',
+                     ' This parameter will be ignored. Use `names(posterior)`',
+                     ' to see all available parameters.'))
+    }
+  }
+  keep_pars <- unlist(keep_pars)
+  if(length(keep_pars) == 0) {
+    stop('No valid parameters requested.')
+  }
+  return(keep_pars)
+}
+
 #' Provide a point estimate for each parameter of interest and its
 #' credible interval
 #'
@@ -28,27 +56,8 @@
 #' }
 #' @export
 point_est <- function(posterior, pars, prob = 0.90) {
-
-  assert_class(posterior, 'stanfit')
   qassert(prob, 'R1[0,1]')
-
-  # Check if all parameter names passed in pars are available in the model
-  # and extract the available parameters
-  pars_grep <- gsub("\\[", "\\\\[", pars)
-  pars_grep <- gsub("\\]", "\\\\]", pars_grep)
-  keep_pars <- sapply(pars_grep, function(x) {
-      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE)
-  })
-  for(name in names(keep_pars)) {
-    if(length(keep_pars[[name]]) == 0) {
-      warning(paste0('Requested parameter "', name, '" not in posterior.',
-                     ' This parameter will be ignored.'))
-    }
-  }
-  keep_pars <- unlist(keep_pars)
-  if(length(keep_pars) == 0) {
-    stop('No valid parameters requested.')
-  }
+  keep_pars <- check_parameters(posterior, pars)
 
   X <- as.matrix(posterior)[, keep_pars]
   if(class(X) != "matrix") X <- matrix(X, dimnames = list(NULL, keep_pars))
@@ -82,19 +91,9 @@ point_est <- function(posterior, pars, prob = 0.90) {
 #' rhat(posterior, pars = c("theta", "zeta"))
 #' }
 #' @export
-rhat <- function(posterior,
-                 pars = c("theta", "theta_mu", "theta_sigma",
-                          "zeta", "zeta_sigma",
-                          "alpha", "alpha_mu", "alpha_sigma",
-                          "gamma", "gamma_sigma",
-                          "omega_domain", "omega_user")) {
+rhat <- function(posterior, pars) {
 
-  pars_grep <- gsub("\\[", "\\\\[", pars)
-  pars_grep <- gsub("\\]", "\\\\]", pars_grep)
-  keep_pars <- unlist(sapply(pars_grep, function(x) {
-      grep(paste0("^", x, "$|^", x, "\\["), names(posterior), value = TRUE,
-           perl = TRUE)
-  }))
+  keep_pars <- check_parameters(posterior, pars)
 
   out <- data.frame(
       rhat = rstan::summary(posterior, keep_pars)$summary[, "Rhat"])
