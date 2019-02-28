@@ -224,7 +224,7 @@ This document provides a brief introduction to the R library [`mediascores`](htt
 
 The logic behind the method is intuitive, and is based on an assumption of homophily: that politicians and ordinary users on social media are more likely to share news stories that align with themselves ideologically than they are stories that are ideologically distant. In the US context, for example, a social media user who is liberal can be expected to share more content from the New York Times or MSNBC than they are content from the Wall Street Journal or Fox News. Conversely, conservatives can be expected to share more content from the Wall Street Journal and Fox News than from the New York Times or MSNBC.
 
-Below, we work through an application of the method to Twitter data there were collected in 2018 from Members of Congress during the 115^th^ session. Our example demonstrates how researchers can use such data to estimate the news-sharing ideology of social media users---in this case, politicians---and that of the content that they share online.
+Below, we work through an application of the method to Twitter data that were collected in 2018 from Members of Congress during the 115^th^ congressional session. Our example demonstrates how researchers can use such data to estimate the news-sharing ideology of social media users---in this case, politicians---and also that of the content that they share online.
 
 # 2. Data {#section2}
 
@@ -286,9 +286,9 @@ Group-level information, $g$ (e.g. Democrat, Republican) is then incorporated by
 \vartheta^{(g)}_{i} \sim \text{Normal}(\mu_{\vartheta}^{(g)}, \sigma_{\vartheta}^{(g)}),
 \end{equation}
 
-where uniform prior distributions are placed on the hyperparameters $\mu_{\vartheta}^{(g)}$ and $\sigma_{\vartheta}^{(g)}$. Finally, the variance parameters $\omega_i$ and $\omega_m$, are given a common distribution $\omega_i \sim \text{InvGamma}(\omega^{(i)}_a, \omega^{(i)}_b)$ and $\omega_m \sim \text{InvGamma}(\omega^{(m)}_a, \omega^{(m)}_b)$, with uniform priors on the hyperparameters.
+where uniform prior distributions are placed on the hyperparameters $\mu_{\vartheta}^{(g)}$ and $\sigma_{\vartheta}^{(g)}$. Finally, the variance parameters $\omega_i$ and $\omega_m$, are given common distributions $\omega_i \sim \text{InvGamma}(\omega^{(i)}_a, \omega^{(i)}_b)$ and $\omega_m \sim \text{InvGamma}(\omega^{(m)}_a, \omega^{(m)}_b)$, with uniform priors on the hyperparameters.
 
-For identification, the parameters representing news media ideology are centered on 0: $\zeta_m \sim \text{Normal}(0, \sigma_{\zeta})$. Lastly, the direction of the model needs to be set, such that high values represent ideological liberalism or conservatism. Here, we follow the practical solution of @Jackman2001, who suggests allowing the sampler to freely explore the posterior and settle in on one of the two scale directions. We then flip the scale and associated parameters after estimation (if required) depending on anchors defined by the researcher: the user is asked to set two news media domains for this purpose (e.g. \{nytimes.com, foxnews.com\}), such that the ideology of the first media organization defines the low end of the scale, and the second, the high end. This strategy works very well in practice.
+For identification, the parameters representing news media ideology are centered on 0: $\zeta_m \sim \text{Normal}(0, \sigma_{\zeta})$. Lastly, the direction of the model needs to be set, such that high values represent ideological liberalism or conservatism. Here, we follow the practical solution of @Jackman2001, who suggests allowing the sampler to freely explore the posterior and settle in on one of the two scale directions. We then flip the scale and associated parameters after estimation (if required) depending on anchors defined by the researcher: the researcher is asked to set two news media domains as scale anchors (e.g. \{nytimes.com, foxnews.com\}), such that the ideology of the first media organization defines the low end of the scale (in this example, liberal), and the second, the high end (in this example, conservative).
 
 
 # 4. Model Fitting {#section4}
@@ -376,7 +376,7 @@ The function outputs $\hat{R}$ statistics for all specified parameters, includin
 subset(rhats, rhat > 1.1)
 ```
 
-Here, we see that none of the specified parameters have $\hat{R}$ statistics greater than 1.1. If we did, it is generally suggested that the model be re-run to collect more post-warmup iterations:
+Here, we see that none of the specified parameters have $\hat{R}$ statistics greater than 1.1. If we did, the solution would typically be to re-run the model with more post-warmup iterations:
 
 ```{r eval = FALSE}
 # Setting iter = 2000 (not run)
@@ -393,12 +393,12 @@ For more detail on $\hat{R}$, see the Stan Modeling Language [User Guide and Ref
 
 ## 5.1 Divergent transitions {#subsection51}
 
-If after model fitting you receive a message that there were "divergent transitions" during estimation, this suggests potential validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but this problem can often be resolved by increasing the value of `adapt_delta`, which can be included in the call to the `mediascores()` function as follows: `mediascores(..., control = list(adapt_delta = 0.99))`. The default value is 0.8 (max < 1). Values of 0.99 or 0.999 typically resolve the problem. However, note that increasing the value of `adapt_delta` can substantially increase the time for model fitting, which can be long as is, especially with relatively large datasets. In practice, for the model presented in this library, this problem in our experience is rare.
+After model fitting, if you receive a message that there were "divergent transitions" during estimation, there may be validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but the problem can often be resolved by increasing the value of `adapt_delta`. This argument can be included in the call to `mediascores()` as follows: `mediascores(..., control = list(adapt_delta = 0.99))`, where the default value is 0.8 (max < 1). Values of 0.99 or 0.999 typically resolve the problem. However, note that increasing the value of `adapt_delta` can substantially increase the time for model fitting. In our experience, this problem is rare for the model presented in this library.
 
 
 ## 5.2 Maximum treedepth exceeded {#subsection52}
 
-If after model fitting you receive a message stating that the "maximum treedepth" was exceeded during estimation, the concern is not validity, but efficiency. If desired, you can increase efficiency by increasing the value of the `max_treedepth` argument, which defaults to 10. As with `adapt_delta`, this argument can be included in the function call as follows: `mediascores(..., control = list(max_treedepth = 15))`.
+If after model fitting you receive a message that the "maximum treedepth" was exceeded during estimation, the concern is one of efficiency not validity. If desired, you can increase efficiency by increasing the value of the `max_treedepth` argument, which defaults to 10. As with `adapt_delta`, this argument can be included in the function call as follows: `mediascores(..., control = list(max_treedepth = 15))`. Increasing `max_treedepth` also increases estimation time.
 
 
 # 6. Analysis {#section6}
@@ -546,11 +546,9 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 
 # 7. A Note on CPU Parallelization {#section7}
 
-The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. The upshot is that you can use many CPU cores for model fitting, and thus _substantially_ cut down on estimation time. This is especially useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated above (using data in a 590 x 152 matrix), took roughly three and a half hours to fit. On a 20-core computer with parallelization turn on, model fitting took less than an hour.
+The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. This allows researchers to use many CPU cores for model fitting and thereby _substantially_ cut down on estimation time. This can be useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated in this vignette (using data from a 590 x 152 matrix) took roughly three and a half hours to fit. On a 20-core computer with within-chain parallelization turned on, model fitting took less than an hour.
 
-To enable within-chain parallelization^[Between-chain parallelization is enabled by default.] requires that the C++ code compiled during the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library's installation be done using flags to turn it on. The process to do this varies from system to system (e.g. Windows, Unix, Mac), but is not overly difficult.
-
-For example, enabling parallelization on the systems to which the author has access required only that the following be added to the `~/.R/Makevars` file (create this file if it does not exist):
+To enable within-chain parallelization^[Between-chain parallelization is enabled by default.] requires that the C++ code compiled during the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library's installation be done using flags to turn it on. The process to do this unfortunately varies from system to system (e.g. Windows, Unix, Mac), but is not overly complicated. For example, enabling parallelization on the systems to which the author has access required only that the following be added to the `~/.R/Makevars` file (create this file if it does not exist):
 
 On Mac OS (10.14.3):
 
@@ -569,7 +567,7 @@ CXX14FLAGS += -O3 -march=native -mtune=native
 CXX14FLAGS += -fPIC
 ```
 
-For further support regarding your specific system, however, please consult the following resources: [Stan Threading Support](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"}, [Stan MPI Parallelism](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"} (for cluster-based systems), and the [Stan user forums](https://discourse.mc-stan.org){target="_blank"}.
+For further support regarding your specific system, please consult the following resources: [Stan Threading Support](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"}, [Stan MPI Parallelism](https://github.com/stan-dev/math/wiki/Threading-Support){target="_blank"} (for cluster-based systems), and the [Stan user forums](https://discourse.mc-stan.org){target="_blank"}.
 
 
 

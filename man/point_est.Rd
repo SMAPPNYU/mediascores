@@ -2,32 +2,44 @@
 % Please edit documentation in R/post_estimation.R
 \name{point_est}
 \alias{point_est}
-\title{Provide a point estimate for each parameter of interest and its
-credible interval}
+\title{Calculate point estimates and credible intervals for parameters of interest}
 \usage{
 point_est(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
   "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
   "omega_domain", "omega_user"), prob = 0.9)
 }
 \arguments{
-\item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
+\item{posterior}{object of class \code{rstan::\link[rstan]{stanfit}} as fit
+by the \code{\link{mediascores}} function}
 
-\item{pars}{[TODO: FILL IN]. Document the parameter selection syntax. If 
-too long for the argument documentation refer to details section and 
-explain there}
+\item{pars}{character vector, a vector of model parameter names e.g.
+\code{c("theta", "zeta[1]", "alpha")}. See Details below.}
 
-\item{prob}{[TODO: FILL IN].}
+\item{prob}{numeric, a number between 0 and 1 indicating the
+probability mass to include in the credible interval. Defaults to 0.9.}
 }
 \value{
 Returns a three-columm matrix containing the median of the posterior of each
-paramter of interest and a credible interval
+parameter of interest and the lower and upper quantile to form a credible
+interval around the median.
 }
 \description{
-[TODO: EXTENDED HEADER]
+\code{point_est} is used to calculate point estimates and credible intervals
+for the parameters of interest to the user.
 }
-\details{
-[TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
+\section{Details}{
+
+
+\code{point_est} is a helper function for users to quickly caluclate the
+median of the posterior for parameters of interest, and credible intervals
+for those parameters with quantiles defined by the user. These estimates can
+be calculated for the following parameters inputted (alone or in combination)
+by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
+"alpha_mu", "alpha_sigma", "gamma", "gamma_sigma", "omega_domain",
+"omega_user"}. Indexed variants of these parameter names can also be
+retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
 }
+
 \examples{
 \dontrun{
 simulated_data <- simulate_data()

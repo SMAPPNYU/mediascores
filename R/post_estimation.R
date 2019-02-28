@@ -1,19 +1,30 @@
-#' Provide a point estimate for each parameter of interest and its
-#' credible interval
+#' Calculate point estimates and credible intervals for parameters of interest
 #' 
-#' [TODO: EXTENDED HEADER]
+#' \code{point_est} is used to calculate point estimates and credible intervals
+#' for the parameters of interest to the user.
 #' 
-#' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
+#' @section Details:
 #' 
-#' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars [TODO: FILL IN]. Document the parameter selection syntax. If 
-#'     too long for the argument documentation refer to details section and 
-#'     explain there
-#' @param prob [TODO: FILL IN].
+#' \code{point_est} is a helper function for users to quickly caluclate the
+#' median of the posterior for parameters of interest, and credible intervals
+#' for those parameters with quantiles defined by the user. These estimates can
+#' be calculated for the following parameters inputted (alone or in combination)
+#' by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
+#' "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma", "omega_domain",
+#' "omega_user"}. Indexed variants of these parameter names can also be
+#' retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
+#' 
+#' @param posterior object of class \code{rstan::\link[rstan]{stanfit}} as fit
+#'      by the \code{\link{mediascores}} function
+#' @param pars character vector, a vector of model parameter names e.g.
+#'      \code{c("theta", "zeta[1]", "alpha")}. See Details below.
+#' @param prob numeric, a number between 0 and 1 indicating the
+#'      probability mass to include in the credible interval. Defaults to 0.9.
 #'     
 #' @return
 #' Returns a three-columm matrix containing the median of the posterior of each
-#' paramter of interest and a credible interval
+#' parameter of interest and the lower and upper quantile to form a credible
+#' interval around the median.
 #' 
 #' @examples
 #' \dontrun{
@@ -48,18 +59,28 @@ point_est <- function(posterior,
 }
 
 
-#' Display Rhat values for the parameters of interest
+#' Display R-hat values for parameters of interest
 #' 
-#' [TODO: EXTENDED HEADER]
+#' \code{rhat} calculates R-hat statistics for each specifide parameter of
+#' interest.
 #' 
-#' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS] 
+#' @section Details:
 #' 
+#' \code{rhat} is a helper function for users to quickly caluclate a common
+#' convergence statistic, R-hat, for each parameter. These statistics can
+#' be calculated for the following parameters inputted (alone or in combination)
+#' by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
+#' "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma", "omega_domain",
+#' "omega_user"}. Indexed variants of these parameter names can also be
+#' retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
+#'
 #' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars [TODO: FILL IN].
+#' @param pars character vector, a vector of model parameter names e.g.
+#'      \code{c("theta", "zeta[1]", "alpha")}. See Details below.
 #'     
 #' @return
-#' Returns a vector of rhat values for the parameters specified by the pars
-#' argument
+#' Returns a named vector of R-hat values for the parameters specified by the
+#' \code{pars} argument.
 #' 
 #' @examples
 #' \dontrun{

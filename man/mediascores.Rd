@@ -10,44 +10,54 @@ mediascores(Y, group = NULL, anchors, user_variance = FALSE,
   refresh = 50, ...)
 }
 \arguments{
-\item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing 
-counts of how often each user (row) shared a given domain (column). No 
-missing data is permitted.}
+\item{Y}{matrix or dataframe of dimension \code{n_users x n_domains}
+containing counts of the frequency with which each user (row) shares a
+given URL domain (column). No missing data are permitted.}
 
 \item{group}{vector of length \code{n_users} indicating group membership of 
-each user. If \code{NULL} every user is assigned to the same group.}
+each user. If \code{NULL}, every user is assigned to the same group.}
 
-\item{anchors}{vector of length 2 indicating index/column position of the 
-anchor domains.}
+\item{anchors}{vector of length 2 indicating the index/column position of the 
+anchor domains. The first index defines the meaning of lower values of
+the scale; the second, upper values. For example, setting the first
+value to indicate the column representing the New York Times and the
+second value to represent the FOX News column would render lower values
+of \eqn{\vartheta_i} and \eqn{\zeta_m} to indicate liberalism; higher
+values, conservativism.}
 
 \item{user_variance}{logical, whether to include a variance parameter for
-each user (omega_i). Note that doing so makes the model more
-computationally demanding and there is typically too few data to identify
-these parameters.}
+each user (i.e. whether to include or exclude \eqn{\omega_i}. Setting
+this argument to \code{TRUE} results in a more computationally demanding
+model. There are typically too few data to identify these additional
+parameters.}
 
-\item{variational}{logical, should variational inference be used 
-(\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling 
-(\code{rstan::\link[rstan]{sampling}}) is used.}
+\item{variational}{logical, whether variational inference is used for
+estimation (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE},
+the standard NUTS sampler in Stan is used
+(\code{rstan::\link[rstan]{sampling}}). Note: variational Bayes is many
+orders of magnitude faster, but it is recommended that its estimates be
+used for final inference unless the size of the data make use of sampling
+infeasible.}
 
-\item{chains}{integer, the number of Markov chains to run. The default is 4.}
+\item{chains}{integer, the number of Markov chains to run (for
+\code{variational = FALSE}. The default is 4.}
 
 \item{cores}{integer, the number of cores to use when running chains in
 parallel.}
 
-\item{threads}{integer, the number of total threads to use when running
-within-chain parallelization. Defaults is no within-chain
-parallelization.}
+\item{threads}{integer, the number of total threads to use for
+within-chain parallelization. Defaults to the value of \code{cores}.}
 
 \item{iter}{integer, the number of total iterations per chain.
 Defaults to 2000.}
 
 \item{warmup}{integer, the number of warmup/burnin iterations per chain.
-Defaults to iter/2.}
+Defaults to \code{floor(iter/2)}.}
 
 \item{refresh}{integer, the number of iterations per chain before sampling
-progress on each chain is displayed.}
+progress on each chain is displayed to the user.}
 
-\item{...}{arguments passed to \code{rstan::\link[rstan]{sampling}}
+\item{...}{additional arguments passed to \code{rstan::\link[rstan]{sampling}}
 (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
 (for \code{variational = FALSE})}
 }
@@ -56,11 +66,30 @@ An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}})
 representing the fitted results.
 }
 \description{
-[TODO: EXTENDED HEADER FILL IN]
+This function is the workhorse of the mediascores library. It fits the model
+of news media sharing as described in more detail in the library vignette and
+in the "Model Details" section further below.
 }
-\details{
-[TODO: FILL IN MODEL DETAILS HERE]
+\section{Model details}{
+
+
+The model fit by the \code{mediascores()} function is a negative binomial
+item-response-style model of the following form:
+
+\deqn{NegBin(\pi_{img}, \omega_i\omega_m)}
+\deqn{\pi_{img} = \alpha_i + \gamma_m - ||\vartheta_i - \zeta_m||^2,}
+
+where \eqn{\alpha_i} denotes a user-level intercept; \eqn{\gamma_m}, a news
+media domain intercept; \eqn{\vartheta_i} the sharing-ideology of user
+\eqn{i}; \eqn{zeta_m} the ideology of news media domain \eqn{m}; and
+\eqn{\omega_i} and \eqn{\omega_m}, user- and domain-level variance paramters.
+Details regarding the priors for these parameters are discussed in the
+library's vignette. A group-specific common prior distribution can be placed
+on users' news-sharing ideology parameters \eqn{\vartheta_i} through the
+integer-valued \code{group} argument (a vector of integers specifying the
+affiliation of each user).
 }
+
 \examples{
 \dontrun{
 sim_data <- simulate_data(200, 500)
