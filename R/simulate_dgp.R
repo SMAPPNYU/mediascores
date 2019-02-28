@@ -9,9 +9,11 @@
 #' @param n_groups, int, number of groups users can belong to
 #' @param group_prob, numeric vector of length \code{n_groups} specifying the 
 #'     probability of a user belonging to each of the groups
-#' @param params, list containing parameters of the model distributions. See 
-#'     Details section for more information [FILL IN]
-#'     
+#' @param user_variance, logical, whether to fit the model with an additional 
+#'     variance parameter per user (i.e. omega_user)
+#' @param params, list containing complete (or partial) parameters of the model 
+#'     distributions. See Details section for more information.
+#' 
 #' @return 
 #' Returns a list with elements:
 #' \itemize{
@@ -42,6 +44,7 @@ simulate_data <- function(n_users = 200,
                           n_domains = 500, 
                           n_groups = 2, 
                           group_prob = c(0.4, 0.6),
+                          user_variance = FALSE,
                           params = list('alpha_mu' = 2, 'alpha_sigma' = 0.5,
                                         'gamma_sigma' = 0.75, 
                                         'theta_mu' = c(-0.75, 0.5),
@@ -50,7 +53,23 @@ simulate_data <- function(n_users = 200,
                                         'omega_user_rate' = 5,
                                         'omega_domain_shape' = 5,
                                         'omega_domain_rate' = 5)) {
-    
+
+    default_params <- list('alpha_mu' = 2, 'alpha_sigma' = 0.5,
+                           'gamma_sigma' = 0.75, 
+                           'theta_mu' = c(-0.75, 0.5),
+                           'theta_sigma' = c(0.25, 0.25),
+                           'omega_user_shape' = 5,
+                           'omega_user_rate' = 5,
+                           'omega_domain_shape' = 5,
+                           'omega_domain_rate' = 5)
+
+    # If user provides a partial list of parameters, fill
+    # remaining with defaults
+    if (any(!names(default_params) %in% params)) {
+      params <- c(params,
+                  default_params[!names(default_params) %in% names(params)])
+    }
+
     # Draw group membership of each user
     group <- sample(1:n_groups, n_users, replace = TRUE, prob = group_prob)
     
@@ -71,12 +90,18 @@ simulate_data <- function(n_users = 200,
     # anchors as the domains with the lowest and highest theta
     anchors <- c(which.min(zeta), which.max(zeta))
     
-    # omega_user and omega_domain represent the variance of the model
-    omega_user <- invgamma::rinvgamma(n_users, params$omega_user_shape, 
-                            params$omega_user_rate)
-    omega_domain <- invgamma::rinvgamma(n_domains, params$omega_domain_shape, 
-                            params$omega_domain_rate)
+    # omega_domain represent the variance of the model (user-level)
+    if (user_variance) {
+      omega_user <- invgamma::rinvgamma(n_users, params$omega_user_shape, 
+                              params$omega_user_rate)
+    } else {
+      omega_user <- rep(1, n_users)
+    }
     
+    # omega_domain represent the variance of the model (domain-level)
+    omega_domain <- invgamma::rinvgamma(n_domains, params$omega_domain_shape, 
+                                        params$omega_domain_rate)
+
     # Compute the values of the user-domain count matrix: the count of each domain
     # shared by each user
     Y = do.call(rbind, lapply(1:n_users, function(i) {
@@ -88,5 +113,7 @@ simulate_data <- function(n_users = 200,
     return(list("Y" = Y, "group" = group, 
                 "anchors" = anchors, 
                 'parameters' = list('alpha' = alpha, 'gamma' = gamma, 
-                                    'theta' = theta, 'zeta' = zeta)))
+                                    'theta' = theta, 'zeta' = zeta,
+                                    'omega_domain' = omega_domain,
+                                    'omega_user' = omega_user)))
 }

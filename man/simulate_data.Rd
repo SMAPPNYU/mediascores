@@ -5,10 +5,10 @@
 \title{Simulate data according to the media score model's data generating process}
 \usage{
 simulate_data(n_users = 200, n_domains = 500, n_groups = 2,
-  group_prob = c(0.4, 0.6), params = list(alpha_mu = 2, alpha_sigma =
-  0.5, gamma_sigma = 0.75, theta_mu = c(-0.75, 0.5), theta_sigma = c(0.25,
-  0.25), omega_user_shape = 5, omega_user_rate = 5, omega_domain_shape = 5,
-  omega_domain_rate = 5))
+  group_prob = c(0.4, 0.6), user_variance = FALSE,
+  params = list(alpha_mu = 2, alpha_sigma = 0.5, gamma_sigma = 0.75,
+  theta_mu = c(-0.75, 0.5), theta_sigma = c(0.25, 0.25), omega_user_shape =
+  5, omega_user_rate = 5, omega_domain_shape = 5, omega_domain_rate = 5))
 }
 \arguments{
 \item{n_users, }{int, number of users in the data}
@@ -20,8 +20,11 @@ simulate_data(n_users = 200, n_domains = 500, n_groups = 2,
 \item{group_prob, }{numeric vector of length \code{n_groups} specifying the 
 probability of a user belonging to each of the groups}
 
-\item{params, }{list containing parameters of the model distributions. See 
-Details section for more information [FILL IN]}
+\item{user_variance, }{logical, whether to fit the model with an additional 
+variance parameter per user (i.e. omega_user)}
+
+\item{params, }{list containing complete (or partial) parameters of the model 
+distributions. See Details section for more information.}
 }
 \value{
 Returns a list with elements:
