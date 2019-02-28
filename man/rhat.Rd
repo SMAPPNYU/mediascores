@@ -9,26 +9,12 @@ rhat(posterior, pars = NULL)
 \arguments{
 \item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
 
-<<<<<<< HEAD
 \item{pars}{character vector, a vector of model parameter names e.g.
 \code{c("theta", "zeta[1]", "alpha")}. See Details below.}
 }
 \value{
 Returns a named vector of R-hat values for the parameters specified by the
 \code{pars} argument.
-=======
-\item{pars}{character vector specifying parameters to extract point
-estimates for. If \code{NULL} all parameters are selected.
-Groups of parameters can be extracted by specifying the
-parameter name without the index value. E.g. \code{"theta"} produces point
-estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
-"theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
-   \code{names(posterior)} to see all available parameters in the model).}
-}
-\value{
-Returns a vector of rhat values for the parameters specified by the pars
-argument.
->>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 }
 \description{
 \code{rhat} calculates R-hat statistics for each specifide parameter of
