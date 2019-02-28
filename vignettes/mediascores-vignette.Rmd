@@ -211,7 +211,7 @@ my.theme <- function(base_size = 10, base_family = "",
 <!-- BEGIN DOCUMENT -->
 
 <h1 style = "font-size: 28px; margin-bottom: 0px; padding-bottom:0px;">News-sharing Ideology from Social Media Link Data</h1>
-<h2 style = "font-size: 24px; margin-top: 15px">The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library in R</h2>
+<h2 style = "font-size: 24px; margin-top: 15px">The [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library in R</h2>
 <h5 style = "font-size: 18px; margin-top: 30px; font-weight: 300">**[Gregory Eady](https://google.com){target="_blank"}**^$\dagger$^ and **[Fridolin Linder](https://google.com){target="_blank"}**^$\dagger$^
 
 ^$\dagger$^ NYU [Social Media and Political Participation (SMaPP) Lab](https://smappnyu.org/){target="_blank"} & Department of Politics</h5>
@@ -220,7 +220,7 @@ my.theme <- function(base_size = 10, base_family = "",
 
 # 1. Introduction {#section1}
 
-This document provides a brief introduction to the R library [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"}, which implements a statistical model for news media sharing data (URLs) on social media (e.g. Twitter, Facebook). The goal of the method is to provide a measure of (1) the news-sharing ideology of politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share online.
+This document provides a brief introduction to the R library [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"}, which implements a statistical model for news media sharing data (URLs) on social media (e.g. Twitter, Facebook). The goal of the method is to provide a measure of (1) the news-sharing ideology of politicians (e.g. Members of Congress) and ordinary users on social media, and (2) the ideology of the content that they share online.
 
 The logic behind the method is intuitive, and is based on an assumption of homophily: that politicians and ordinary users on social media are more likely to share news stories that align with themselves ideologically than they are stories that are ideologically distant. In the US context, for example, a social media user who is liberal can be expected to share more content from the New York Times or MSNBC than they are content from the Wall Street Journal or Fox News. Conversely, conservatives can be expected to share more content from the Wall Street Journal and Fox News than from the New York Times or MSNBC.
 
@@ -230,7 +230,7 @@ Below, we work through an application of the method to Twitter data that were co
 
 The model uses as data the number of stories from each news organization that are shared by each social media user. In this vignette, we use the stories shared by members of the 115^th^ US Congress, US governors, and members of the US executive (e.g. the President and his predecessors). The data come from the tweets and retweets from these politicians, which were collected using the Twitter API at the end of 2018.^[URLs from "quote tweets" are excluded because Twitter users often use the quoted portion of tweets to mock the content of other users.] Because many URLs are provided only in shortened form, we unshorten them as necessary (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD){target="_blank"} ---> [`nytimes.com/2018/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html){target="_blank"}).^[An example of a (parallelized) link unshortener is that developed by [Leon Yin](https://leonyin.org/){target="_blank"}: [`urlExpander`](https://github.com/SMAPPNYU/urlExpander){target="_blank"}.] The resulting data contains all URLs from tweets and retweets that linked to national news media organizations. To get a feel for these data, we describe them by example below.
 
-To begin, we read in the `data.frame` that contains the count of the stories from each news media domain that have been tweeted and retweeted by each politician. These data, which are included in the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library, also contain basic identifying information about each actor:
+To begin, we read in the `data.frame` that contains the count of the stories from each news media domain that have been tweeted and retweeted by each politician. These data, which are included in the [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, also contain basic identifying information about each actor:
 
 ```{r}
 library(mediascores)
@@ -266,7 +266,7 @@ As we can see, the data used for the model is simply a user-domain count matrix,
 
 # 3. A Statistical Model of News Sharing {#section3}
 
-To model these data, the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is designed to fit the following model:\begin{equation}
+To model these data, the [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library is designed to fit the following model:\begin{equation}
 y_{img} \sim \text{NegBin}(\pi_{img}, \omega_i\omega_m)
 \end{equation}\begin{equation}
 \pi_{img} = \text{exp}(\alpha_i + \gamma_m - ||\vartheta_i - \zeta_m||^2),
@@ -306,7 +306,7 @@ rownames(User_Domain_Counts) <- MOC115$name
 print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)
 ```
 
-The resulting user-domain count matrix can then be inputted as an argument into the workhorse function of the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library, `mediascores()`, as follows:
+The resulting user-domain count matrix can then be inputted as an argument into the workhorse function of the [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, `mediascores()`, as follows:
 
 ```{r eval = FALSE}
 # Fit the sharing ideology model
@@ -354,7 +354,7 @@ library(shinystan)
 shiny_stan(fitted_model)
 ```
 
-Here, we focus on a simple helper function built into the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library to access one of the key post-estimation statistics, $\hat{R}$, which is commonly used to assess parameter convergence. Below, we use the `rhat()` function to display the $\hat{R}$ statistic for the two primary quantities of interest, $\vartheta_i$ (the news-sharing ideology of users), and $\zeta_m$ (the ideology of news media organizations):
+Here, we focus on a simple helper function built into the [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library to access one of the key post-estimation statistics, $\hat{R}$, which is commonly used to assess parameter convergence. Below, we use the `rhat()` function to display the $\hat{R}$ statistic for the two primary quantities of interest, $\vartheta_i$ (the news-sharing ideology of users), and $\zeta_m$ (the ideology of news media organizations):
 
 ```{r eval = FALSE}
 rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
@@ -546,9 +546,9 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 
 # 7. A Note on CPU Parallelization {#section7}
 
-The [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. This allows researchers to use many CPU cores for model fitting and thereby _substantially_ cut down on estimation time. This can be useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated in this vignette (using data from a 590 x 152 matrix) took roughly three and a half hours to fit. On a 20-core computer with within-chain parallelization turned on, model fitting took less than an hour.
+The [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library is coded using map-reduce to permit within-chain CPU parallelization. This allows researchers to use many CPU cores for model fitting and thereby _substantially_ cut down on estimation time. This can be useful even for small-sized data sets, because the model is computationally demanding. For example, using a 4-core (7 year old) laptop, the model estimated in this vignette (using data from a 590 x 152 matrix) took roughly three and a half hours to fit. On a 20-core computer with within-chain parallelization turned on, model fitting took less than an hour.
 
-To enable within-chain parallelization^[Between-chain parallelization is enabled by default.] requires that the C++ code compiled during the [`mediascores`](https://cran.r-project.org/package=mediascores){target="_blank"} library's installation be done using flags to turn it on. The process to do this unfortunately varies from system to system (e.g. Windows, Unix, Mac), but is not overly complicated. For example, enabling parallelization on the systems to which the author has access required only that the following be added to the `~/.R/Makevars` file (create this file if it does not exist):
+To enable within-chain parallelization^[Between-chain parallelization is enabled by default.] requires that the C++ code compiled during the [`mediascores`](https://github.com/SMAPPNYU/mediascores){target="_blank"} library's installation be done using flags to turn it on. The process to do this unfortunately varies from system to system (e.g. Windows, Unix, Mac), but is not overly complicated. For example, enabling parallelization on the systems to which the author has access required only that the following be added to the `~/.R/Makevars` file (create this file if it does not exist):
 
 On Mac OS (10.14.3):
 
