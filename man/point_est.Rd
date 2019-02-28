@@ -5,35 +5,33 @@
 \title{Provide a point estimate for each parameter of interest and its
 credible interval}
 \usage{
-point_est(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
-  "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
-  "omega_domain", "omega_user"), prob = 0.9)
+point_est(posterior, pars, prob = 0.9)
 }
 \arguments{
 \item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
 
-\item{pars}{[TODO: FILL IN]. Document the parameter selection syntax. If 
-too long for the argument documentation refer to details section and 
-explain there}
+\item{pars}{character vector specifying parameters to extract point
+estimates for. Groups of parameters can be extracted by specifying the
+parameter name without the index value. E.g. \code{"theta"} produces point
+estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
+"theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
+   \code{names(posterior)} to see all available parameters in the model).}
 
 \item{prob}{[TODO: FILL IN].}
 }
 \value{
 Returns a three-columm matrix containing the median of the posterior of each
-paramter of interest and a credible interval
+paramter of interest and a credible interval.
 }
 \description{
 [TODO: EXTENDED HEADER]
 }
-\details{
-[TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
-}
 \examples{
 \dontrun{
-simulated_data <- simulate_data()
-posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
-                         anchors = simulated_data$anchors, 
-                         variational = TRUE)
+simulated_data <- simulate_data(5, 20)
+posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group,
+                         anchors = simulated_data$anchors,
+                         variational = FALSE, chains = 1, iter = 500)
 point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
 }
 }
