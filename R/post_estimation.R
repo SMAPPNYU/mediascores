@@ -1,36 +1,6 @@
-<<<<<<< HEAD
-#' Calculate point estimates and credible intervals for parameters of interest
-#' 
-#' \code{point_est} is used to calculate point estimates and credible intervals
-#' for the parameters of interest to the user.
-#' 
-#' @section Details:
-#' 
-#' \code{point_est} is a helper function for users to quickly caluclate the
-#' median of the posterior for parameters of interest, and credible intervals
-#' for those parameters with quantiles defined by the user. These estimates can
-#' be calculated for the following parameters inputted (alone or in combination)
-#' by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
-#' "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma", "omega_domain",
-#' "omega_user"}. Indexed variants of these parameter names can also be
-#' retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
-#' 
-#' @param posterior object of class \code{rstan::\link[rstan]{stanfit}} as fit
-#'      by the \code{\link{mediascores}} function
-#' @param pars character vector, a vector of model parameter names e.g.
-#'      \code{c("theta", "zeta[1]", "alpha")}. See Details below.
-#' @param prob numeric, a number between 0 and 1 indicating the
-#'      probability mass to include in the credible interval. Defaults to 0.9.
-#'     
-#' @return
-#' Returns a three-columm matrix containing the median of the posterior of each
-#' parameter of interest and the lower and upper quantile to form a credible
-#' interval around the median.
-#' 
-=======
 # Check if requested parameters are available in posterior object
 #
-# See `poit_est` and `rhat` for argument documentation.
+# See `point_est` and `rhat` for argument documentation.
 #
 # Returns list of all valid requested parameters. If pars is NULL
 # it returns all parameters
@@ -61,28 +31,34 @@ check_parameters <- function(posterior, pars) {
   return(keep_pars)
 }
 
-#' Provide a point estimate for each parameter of interest and its
-#' credible interval
-#'
-#' [TODO: EXTENDED HEADER]
-#'
-#' @import checkmate
-#'
-#' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars character vector specifying parameters to extract point
-#'  estimates for. If \code{NULL} all parameters are selected.
-#'  Groups of parameters can be extracted by specifying the
-#'  parameter name without the index value. E.g. \code{"theta"} produces point
-#'  estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
-#'  "theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
-#'     \code{names(posterior)} to see all available parameters in the model).
-#' @param prob [TODO: FILL IN].
-#'
+#' Calculate point estimates and credible intervals for parameters of interest
+#' 
+#' \code{point_est} is used to calculate point estimates and credible intervals
+#' for the parameters of interest to the user.
+#' 
+#' @section Details:
+#' 
+#' \code{point_est} is a helper function for users to quickly caluclate the
+#' median of the posterior for parameters of interest, and credible intervals
+#' for those parameters with quantiles defined by the user. These estimates can
+#' be calculated for the following parameters inputted (alone or in combination)
+#' by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
+#' "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma", "omega_domain",
+#' "omega_user"}. Indexed variants of these parameter names can also be
+#' retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
+#' 
+#' @param posterior object of class \code{rstan::\link[rstan]{stanfit}} as fit
+#'      by the \code{\link{mediascores}} function
+#' @param pars character vector, a vector of model parameter names e.g.
+#'      \code{c("theta", "zeta[1]", "alpha")}. See Details below.
+#' @param prob numeric, a number between 0 and 1 indicating the
+#'      probability mass to include in the credible interval. Defaults to 0.9.
+#'     
 #' @return
 #' Returns a three-columm matrix containing the median of the posterior of each
-#' paramter of interest and a credible interval.
-#'
->>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
+#' parameter of interest and the lower and upper quantile to form a credible
+#' interval around the median.
+#' 
 #' @examples
 #' \dontrun{
 #' simulated_data <- simulate_data(5, 20)
@@ -106,7 +82,6 @@ point_est <- function(posterior, pars = NULL, prob = 0.90) {
 }
 
 
-<<<<<<< HEAD
 #' Display R-hat values for parameters of interest
 #' 
 #' \code{rhat} calculates R-hat statistics for each specifide parameter of
@@ -130,27 +105,6 @@ point_est <- function(posterior, pars = NULL, prob = 0.90) {
 #' Returns a named vector of R-hat values for the parameters specified by the
 #' \code{pars} argument.
 #' 
-=======
-#' Display Rhat values for the parameters of interest
-#'
-#' [TODO: EXTENDED HEADER]
-#'
-#' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
-#'
-#' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars character vector specifying parameters to extract point
-#'  estimates for. If \code{NULL} all parameters are selected.
-#'  Groups of parameters can be extracted by specifying the
-#'  parameter name without the index value. E.g. \code{"theta"} produces point
-#'  estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
-#'  "theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
-#'     \code{names(posterior)} to see all available parameters in the model).
-#'
-#' @return
-#' Returns a vector of rhat values for the parameters specified by the pars
-#' argument.
-#'
->>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 #' @examples
 #' \dontrun{
 #' simulated_data <- simulate_data()
