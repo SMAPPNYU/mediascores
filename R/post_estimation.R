@@ -1,9 +1,14 @@
 # Check if requested parameters are available in posterior object
 #
 # See `poit_est` and `rhat` for argument documentation.
-# @return Returns list of all valid requested parameters
+#
+# Returns list of all valid requested parameters. If pars is NULL
+# it returns all parameters
 check_parameters <- function(posterior, pars) {
   assert_class(posterior, 'stanfit')
+  if(is.null(pars)) {
+    pars <- names(posterior)
+  }
 
   # Check if all parameter names passed in pars are available in the model
   # and extract the available parameters
@@ -35,7 +40,8 @@ check_parameters <- function(posterior, pars) {
 #'
 #' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
 #' @param pars character vector specifying parameters to extract point
-#'  estimates for. Groups of parameters can be extracted by specifying the
+#'  estimates for. If \code{NULL} all parameters are selected.
+#'  Groups of parameters can be extracted by specifying the
 #'  parameter name without the index value. E.g. \code{"theta"} produces point
 #'  estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
 #'  "theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
@@ -55,7 +61,7 @@ check_parameters <- function(posterior, pars) {
 #' point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
 #' }
 #' @export
-point_est <- function(posterior, pars, prob = 0.90) {
+point_est <- function(posterior, pars = NULL, prob = 0.90) {
   qassert(prob, 'R1[0,1]')
   keep_pars <- check_parameters(posterior, pars)
 
@@ -76,11 +82,17 @@ point_est <- function(posterior, pars, prob = 0.90) {
 #' [TODO: THIS IS THE DETAILS SECTION: FILL IN INFORMATION ON THE MODEL PARAMERS]
 #'
 #' @param posterior, object of class \code{rstan::\link[rstan]{stanfit}}.
-#' @param pars [TODO: FILL IN].
+#' @param pars character vector specifying parameters to extract point
+#'  estimates for. If \code{NULL} all parameters are selected.
+#'  Groups of parameters can be extracted by specifying the
+#'  parameter name without the index value. E.g. \code{"theta"} produces point
+#'  estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
+#'  "theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
+#'     \code{names(posterior)} to see all available parameters in the model).
 #'
 #' @return
 #' Returns a vector of rhat values for the parameters specified by the pars
-#' argument
+#' argument.
 #'
 #' @examples
 #' \dontrun{
@@ -91,7 +103,7 @@ point_est <- function(posterior, pars, prob = 0.90) {
 #' rhat(posterior, pars = c("theta", "zeta"))
 #' }
 #' @export
-rhat <- function(posterior, pars) {
+rhat <- function(posterior, pars = NULL) {
 
   keep_pars <- check_parameters(posterior, pars)
 
@@ -116,7 +128,6 @@ rhat <- function(posterior, pars) {
   }
 
   return(out)
-
 }
 
 

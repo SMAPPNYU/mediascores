@@ -5,13 +5,14 @@
 \title{Provide a point estimate for each parameter of interest and its
 credible interval}
 \usage{
-point_est(posterior, pars, prob = 0.9)
+point_est(posterior, pars = NULL, prob = 0.9)
 }
 \arguments{
 \item{posterior, }{object of class \code{rstan::\link[rstan]{stanfit}}.}
 
 \item{pars}{character vector specifying parameters to extract point
-estimates for. Groups of parameters can be extracted by specifying the
+estimates for. If \code{NULL} all parameters are selected.
+Groups of parameters can be extracted by specifying the
 parameter name without the index value. E.g. \code{"theta"} produces point
 estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
 "theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
