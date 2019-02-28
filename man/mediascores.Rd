@@ -10,6 +10,7 @@ mediascores(Y, group = NULL, anchors, user_variance = FALSE,
   refresh = 50, ...)
 }
 \arguments{
+<<<<<<< HEAD
 \item{Y}{matrix or dataframe of dimension \code{n_users x n_domains}
 containing counts of the frequency with which each user (row) shares a
 given URL domain (column). No missing data are permitted.}
@@ -24,6 +25,17 @@ value to indicate the column representing the New York Times and the
 second value to represent the FOX News column would render lower values
 of \eqn{\vartheta_i} and \eqn{\zeta_m} to indicate liberalism; higher
 values, conservativism.}
+=======
+\item{Y}{matrix or dataframe of dimension (n_user x n_domains) containing
+counts of how often each user (row) shared a given domain (column). No
+missing data is permitted.}
+
+\item{group}{vector of length \code{n_users} indicating group membership of
+each user. If \code{NULL} every user is assigned to the same group.}
+
+\item{anchors}{vector of length 2 indicating index/column position of the
+anchor domains.}
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 
 \item{user_variance}{logical, whether to include a variance parameter for
 each user (i.e. whether to include or exclude \eqn{\omega_i}. Setting
@@ -31,6 +43,7 @@ this argument to \code{TRUE} results in a more computationally demanding
 model. There are typically too few data to identify these additional
 parameters.}
 
+<<<<<<< HEAD
 \item{variational}{logical, whether variational inference is used for
 estimation (\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE},
 the standard NUTS sampler in Stan is used
@@ -38,6 +51,11 @@ the standard NUTS sampler in Stan is used
 orders of magnitude faster, but it is recommended that its estimates be
 used for final inference unless the size of the data make use of sampling
 infeasible.}
+=======
+\item{variational}{logical, should variational inference be used
+(\code{rstan::\link[rstan]{vb}}). If set to \code{FALSE} exact sampling
+(\code{rstan::\link[rstan]{sampling}}) is used.}
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 
 \item{chains}{integer, the number of Markov chains to run (for
 \code{variational = FALSE}. The default is 4.}
@@ -57,13 +75,20 @@ Defaults to \code{floor(iter/2)}.}
 \item{refresh}{integer, the number of iterations per chain before sampling
 progress on each chain is displayed to the user.}
 
+<<<<<<< HEAD
 \item{...}{additional arguments passed to \code{rstan::\link[rstan]{sampling}}
 (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
+=======
+\item{...}{arguments passed to \code{rstan::\link[rstan]{sampling}}
+(for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}}
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 (for \code{variational = FALSE})}
 }
 \value{
-An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
-representing the fitted results.
+An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}})
+representing the fitted results. You can use \code{\link{point_est}} and
+\code{\link{rhat}} to extract point estimates and rhat values for the
+posterior object.
 }
 \description{
 This function is the workhorse of the mediascores library. It fits the model
@@ -93,7 +118,7 @@ affiliation of each user).
 \examples{
 \dontrun{
 sim_data <- simulate_data(200, 500)
-posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors,
                          variational = FALSE, chains = 2)
 }
 }

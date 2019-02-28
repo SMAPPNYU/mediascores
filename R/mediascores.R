@@ -61,25 +61,28 @@
 #' @param refresh integer, the number of iterations per chain before sampling
 #'     progress on each chain is displayed to the user.
 #' @param ... additional arguments passed to \code{rstan::\link[rstan]{sampling}}
-#'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}} 
+#'     (for \code{variational = TRUE}) or \code{rstan::\link[rstan]{vb}}
 #'     (for \code{variational = FALSE})
-#' @return 
-#' An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}}) 
-#' representing the fitted results.
-#' 
+#'
+#' @return
+#' An object of S4 class stanfit (see \code{\link[rstan]{stanfit-class}})
+#' representing the fitted results. You can use \code{\link{point_est}} and
+#' \code{\link{rhat}} to extract point estimates and rhat values for the
+#' posterior object.
+#'
 #' @examples
 #' \dontrun{
 #' sim_data <- simulate_data(200, 500)
-#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors, 
+#' posterior <- mediascores(sim_data$Y, sim_data$group, sim_data$anchors,
 #'                          variational = FALSE, chains = 2)
 #' }
 #' @export
-mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE, 
+mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
                         variational = FALSE, chains = 4,
                         cores = getOption("mc.cores", 1L), threads = cores,
                         iter = 2000, warmup = floor(iter/2), refresh = 50,
                         ...) {
-    
+
   # Check user inputs
   assert(
     check_data_frame(Y, any.missing = FALSE, min.rows = 2,
@@ -128,7 +131,7 @@ mediascores <- function(Y, group = NULL, anchors, user_variance = FALSE,
     if(user_variance) {
       posterior <- rstan::vb(stanmodels$mediascores_vb,
                              data = model_data, include = TRUE,
-                             pars = pars_to_include, 
+                             pars = pars_to_include,
                              ...)
     } else {
       posterior <- rstan::vb(stanmodels$mediascores_domain_vb,

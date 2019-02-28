@@ -4,29 +4,42 @@
 \alias{point_est}
 \title{Calculate point estimates and credible intervals for parameters of interest}
 \usage{
-point_est(posterior, pars = c("theta", "theta_mu", "theta_sigma", "zeta",
-  "alpha", "alpha_mu", "alpha_sigma", "gamma", "gamma_sigma",
-  "omega_domain", "omega_user"), prob = 0.9)
+point_est(posterior, pars = NULL, prob = 0.9)
 }
 \arguments{
 \item{posterior}{object of class \code{rstan::\link[rstan]{stanfit}} as fit
 by the \code{\link{mediascores}} function}
 
+<<<<<<< HEAD
 \item{pars}{character vector, a vector of model parameter names e.g.
 \code{c("theta", "zeta[1]", "alpha")}. See Details below.}
+=======
+\item{pars}{character vector specifying parameters to extract point
+estimates for. If \code{NULL} all parameters are selected.
+Groups of parameters can be extracted by specifying the
+parameter name without the index value. E.g. \code{"theta"} produces point
+estimates for all \code{theta} parameter (i.e. \code{"theta[1]",
+"theta[2]", ect.}). See \code{\link{mediascores}} for model details and run
+   \code{names(posterior)} to see all available parameters in the model).}
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 
 \item{prob}{numeric, a number between 0 and 1 indicating the
 probability mass to include in the credible interval. Defaults to 0.9.}
 }
 \value{
 Returns a three-columm matrix containing the median of the posterior of each
+<<<<<<< HEAD
 parameter of interest and the lower and upper quantile to form a credible
 interval around the median.
+=======
+paramter of interest and a credible interval.
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 }
 \description{
 \code{point_est} is used to calculate point estimates and credible intervals
 for the parameters of interest to the user.
 }
+<<<<<<< HEAD
 \section{Details}{
 
 
@@ -40,12 +53,14 @@ by the user: \code{"theta", "theta_mu", "theta_sigma", "zeta", "alpha",
 retrieved (e.g. \code{c("theta[4]", "zeta[1]")}.
 }
 
+=======
+>>>>>>> bf4c61c7d74498044063cfc069c57077d9ea8951
 \examples{
 \dontrun{
-simulated_data <- simulate_data()
-posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group, 
-                         anchors = simulated_data$anchors, 
-                         variational = TRUE)
+simulated_data <- simulate_data(5, 20)
+posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group,
+                         anchors = simulated_data$anchors,
+                         variational = FALSE, chains = 1, iter = 500)
 point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
 }
 }
