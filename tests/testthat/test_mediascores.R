@@ -6,19 +6,21 @@ d <- simulate_data(n_user = 10, n_domain = 10)
 out <- mediascores(Y = d$Y, group = d$group, anchors = d$anchors,
                    chains = 1, cores = 1, iter = 1000, warmup = 100,
                    seed = seed)
-
-test_that("mediascores function produced a valid stanfit object", {
-    expect_equal(median(unlist(rstan::extract(out, 'theta[1]'))), 0.46167,
-                 tolerance = 10e-5)
+test_that("point_est returns correctly and params returned by mediascores are
+           dimension right", {
+    pe <- point_est(out)
+    expect_equal(dim(pe), c(61, 3))
 })
 
-test_that("point_est works", {
-    theta_1_median = point_est(out, 'theta[1]')[1]
-    expect_equal(theta_1_median, 0.46167,
-                 tolerance = 10e-5)
+test_that("mediascores function produces sufficent correlation of estimates
+          with true parameters", {
+    pe <- point_est(out, pars = 'theta')
+    # Check if correlation is at leat 0.9
+    expect_equal(cor(pe[,1], d$parameters$theta), 1,
+                 tolerance = 0.1)
 })
 
 test_that("rhat works", {
-    rhat = rhat(out, 'theta[1]')[1, 1]
-    expect_equal(rhat, 0.99931, tolerance = 10e-4)
+    rhat = rhat(out)
+    expect_equal(dim(rhat), c(61, 1))
 })
