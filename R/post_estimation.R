@@ -116,6 +116,9 @@ point_est <- function(posterior, pars = NULL, prob = 0.90) {
 #' @export
 rhat <- function(posterior, pars = NULL) {
 
+  if(posterior@stan_args[[1]]$method != "sampling") {
+    stop("R-hat values are not available when the model is fit using varational inference (i.e. mediascores(..., variational = TRUE).")
+  }
   keep_pars <- check_parameters(posterior, pars)
 
   out <- data.frame(

@@ -25,7 +25,7 @@
 #' The object outputted from the estimation function \code{\link{mediascores}}
 #' is a \code{\link{stanfit-class}} object from the
 #' \href{https://mc-stan.org}{Stan} Bayesian inference engine. All methods for
-#' the analysis of Stan objects are therefore useable for those outtputed by the
+#' the analysis of Stan objects are therefore useable for those outputted by the
 #' \code{\link{mediascores}} function. A helper function \code{\link{rhat}} is
 #' provided to give a quick summary of R-hat values to assess the most common
 #' convergence statistics for one's parameters of interest.
