@@ -517,15 +517,8 @@ The <a href="https://github.com/SMAPPNYU/mediascores" target="_blank"><code>medi
 <h1>2. Data</h1>
 <p>The model uses as data the number of stories from each news organization that are shared by each social media user. In this vignette, we use the stories shared by members of the 115<sup>th</sup> US Congress, US governors, and members of the US executive (e.g. the President and his predecessors). The data come from the tweets and retweets from these politicians, which were collected using the Twitter API at the end of 2018.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> Because many URLs are provided only in shortened form, we unshorten them as necessary (e.g. <a href="https://nyti.ms/2BUTshD" target="_blank"><code>nyti.ms/2BUTshD</code></a> —&gt; <a href="https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html" target="_blank"><code>nytimes.com/2018/...</code></a>).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> The resulting data contains all URLs from tweets and retweets that linked to national news media organizations. To get a feel for these data, we describe them by example below.</p>
 <p>To begin, we read in the <code>data.frame</code> that contains the count of the stories from each news media domain that have been tweeted and retweeted by each politician. These data, which are included in the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank"><code>mediascores</code></a> library, also contain basic identifying information about each actor:</p>
-<pre class="r"><code>library(mediascores)</code></pre>
-<pre><code>Loading required package: Rcpp</code></pre>
-<pre><code>
-mediascores: News-sharing Ideology from Social Media Link Data.
-Version 0.0.1.9000 (Development Version)
-copyright (c) 2019, Gregory Eady, New York University
-                    Fridolin Linder, New York University
-For citation information, type citation(&quot;mediascores&quot;).</code></pre>
-<pre class="r"><code>library(ggplot2)
+<pre class="r"><code>library(mediascores)
+library(ggplot2)
 
 # Read in Twitter URL-sharing data
 data(MOC115)</code></pre>
@@ -774,7 +767,7 @@ CXX14FLAGS += -fPIC</code></pre>
 <li id="fn2"><p>An example of a (parallelized) link unshortener is that developed by <a href="https://leonyin.org/" target="_blank">Leon Yin</a>: <a href="https://github.com/SMAPPNYU/urlExpander" target="_blank"><code>urlExpander</code></a>.<a href="#fnref2" class="footnote-back">↩</a></p></li>
 <li id="fn3"><p>NOMINATE scores are the canonical measure of Members of Congress’s ideology, based on their roll-call voting record <span class="citation">(Poole and Rosenthal 1985; Poole 2005)</span>. NOMINATE data were downloaded from <a href="https://voteview.com" target="_blank">VoteView</a>.<a href="#fnref3" class="footnote-back">↩</a></p></li>
 <li id="fn4"><p>The default model, however, excludes the parameter <span class="math inline">\(\omega_i\)</span>, which is computationally burdensome and difficult to estimate.<a href="#fnref4" class="footnote-back">↩</a></p></li>
-<li id="fn5"><p>Between-chain parallelization is enabled by default.<a href="#fnref5" class="footnote-back">↩</a></p></li>
+<li id="fn5"><p><em>Between</em>-chain parallelization is enabled by default.<a href="#fnref5" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
 
