@@ -4,6 +4,8 @@ This library provides an R implementation of the statistical model introduced in
 
 A software vignette with instructions for installation and usage of the library can be found [here](http://htmlpreview.github.io/?https://github.com/SMAPPNYU/mediascores/blob/master/vignettes/mediascores-vignette.html)
 
+---
 
+Eady, Gregory, Richard Bonneau, Joshua A. Tucker and Jonathan Nagler. Forthcoming. “News Sharing on Social Media: Mapping the Ideology of News Media, Politicians, and the Mass Public.” Political Analysis
 
 
