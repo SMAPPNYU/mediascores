@@ -12,6 +12,6 @@ A DESCRIPTION OF THE PACKAGE
 Stan Development Team (NA). RStan: the R interface to Stan. R package version 2.32.6. https://mc-stan.org
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Gregory Eady \email{gregory.eady@gmail.com} (\href{https://orcid.org/0000-0003-0184-0055}{ORCID})
 
 }

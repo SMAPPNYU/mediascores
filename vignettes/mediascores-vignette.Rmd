@@ -1,0 +1,584 @@
+---
+author: "Gregory Eady"
+date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+    theme: default
+    highlight: default
+bibliography: "Bibliography.bib"
+biblio-style: apsr
+comment: ""
+vignette: >
+  %\VignetteIndexEntry{misreport Vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+params:
+  EVAL: !r identical(Sys.getenv("NOT_CRAN"), "true")
+---
+ 
+<!--
+To build:
+Anywhere there is a comment "SET TO EVAL = TRUE TO BUILD VIGNETTE", set that R code block to "eval = TRUE"
+
+rmarkdown::render("~/GitHub/mediascores/vignettes/mediascores-vignette.Rmd")
+rmarkdown::render("~/Downloads/mediascores/vignettes/mediascores-vignette.Rmd")
+
+To submit changes to GitHub or CRAN, however, RESET eval in those cases to "eval = FALSE"
+-->
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+<script type="text/x-mathjax-config"> 
+    MathJax.Hub.Config({ 
+        "HTML-CSS": { scale: 91, linebreaks: { automatic: true } }, 
+        SVG: { linebreaks: { automatic:true } }, 
+        displayAlign: "center" });
+</script>
+
+<style>
+  @media {
+    .container-fluid{
+      max-width: 900px;
+    }
+  }
+
+  body {
+    background: #FFFFFF;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 17px;
+  }
+
+  mark {
+    background-color: #E9E9E9;
+    color: #000000;
+  }
+
+  pre {
+    background-color: #FFFFFF;
+    border-radius: 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #C9C9C9;
+
+  }
+
+  p {
+    padding-top: 10px;
+  }
+
+  .container-fluid h1,
+  .container-fluid h2,
+  .container-fluid h3,
+  .container-fluid h4{
+    color:#000000;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+  }
+
+  .container-fluid h1{
+    text-align: left;
+    letter-spacing: 1px;
+    line-height: 130%;
+    font-weight: 800;
+    font-size: 32px;
+    padding-top:10px;
+    padding-bottom:5px;
+  }
+
+  .container-fluid h2{
+    text-align: left;
+    letter-spacing: 1px;
+    font-weight: 800;
+    font-size: 18px;
+    padding-bottom:5px;
+  }
+
+  blockquote {
+    border-left: 0px solid;
+    padding-left: 40px;
+    padding-top: 14px;
+    padding-bottom: 18px;
+    padding-right: 40px;
+    background-color: #F6F6F6;
+    border-top: 0px;
+    border-bottom: 0px;
+    margin: 0px;
+    background-position: middle left;
+    background-repeat: no-repeat;
+    text-indent: 0px;
+    font-size: 16px;
+    letter-spacing: 0px;
+    /*line-height: 22px;*/
+    font-family: 'Lato', sans-serif;
+  }
+
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
+    color: #08884E;
+    font-weight: 500;
+  }
+
+  hr {
+    width: 100%;
+    margin-left: 0; 
+    margin-right: auto; 
+    height: 0px;
+    border: 1px;
+    color: #db0057;
+    border-top: dotted 1px;
+  }
+
+</style>
+
+
+```{r set-options, include = FALSE}
+options(width = 10000)
+knitr::opts_chunk$set(comment = "")
+set.seed(121)
+my.theme <- function(base_size = 10, base_family = "",
+                     remove.ticks.x = FALSE,
+                     remove.ticks.y = FALSE,
+                     grid.x_colour = NA, grid.y_colour = NA,
+                     grid.x_linetype = NA, grid.y_linetype = NA,
+                     grid.x_size = NA, grid.y_size = NA,
+                     strip_colour = NA, strip_text = "black",
+                     background_colour = NA,
+                     plot_background_colour = NA,
+                     text_colour = NA,
+                     tick_colour = "black", tick_length = 0.2,
+                     borderless = 0, bordersize = 0.5){ 
+    if((!is.na(grid.x_linetype) | !is.na(grid.x_size)) & is.na(grid.x_colour)) {
+        grid.x_colour <- "black"
+    }
+    if((!is.na(grid.y_linetype) | !is.na(grid.y_size)) & is.na(grid.y_colour)) {
+        grid.y_colour <- "black"
+    }
+
+  if(is.na(grid.x_size)) grid.x_size <- 0.25
+  if(is.na(grid.x_linetype)) grid.x_linetype <- 1
+  if(is.na(grid.y_size)) grid.y_size <- 0.25
+  if(is.na(grid.y_linetype)) grid.y_linetype <- 1
+
+  if(borderless == 2) {
+    border <- theme(panel.border = element_blank(),
+                    strip.background = element_blank())
+  }
+  
+  else if(borderless == 1) {
+    border <- theme(axis.line = element_line(colour = "black", size = 0.25),
+                    panel.border = element_blank(),
+                    # panel.background = element_blank(),
+                    strip.background = element_blank())
+  }
+  else if(borderless == 0) border <- theme()
+  if(remove.ticks.x == TRUE) border <- border + theme(axis.ticks.x = element_blank())
+  if(remove.ticks.y == TRUE) border <- border + theme(axis.ticks.y = element_blank())
+  theme(axis.text.x       = element_text(family = base_family, colour = "black", size = base_size, vjust = 1, lineheight = 0.9),
+        axis.text.y       = element_text(family = base_family, colour = "black", size = base_size, hjust = 1, lineheight = 0.9),
+        axis.ticks        = element_line(colour = tick_colour, size = 0.2),
+        axis.ticks.length = unit(tick_length, "lines"),
+        axis.title.x      = element_text(family = base_family, face = "bold", size = base_size*0.9, colour = "black", vjust = 0),
+        axis.title.y      = element_text(family = base_family, face = "bold", size = base_size*0.9, angle = 90, colour = "black", vjust = 1),
+        legend.background = element_blank(),#element_rect(fill = "grey95"),
+        legend.key = element_blank(),
+        legend.key.size = unit(0.6, "lines"),
+        legend.text = element_text(family = base_family, size = base_size, color = "black", face = "plain", lineheight = 1),
+        legend.text.align = -1, 
+        legend.title = element_blank(),
+        legend.title.align = 1,
+        legend.position = "top",
+        legend.direction = "horizontal",
+        legend.justification = c(0, 1),
+        panel.background = element_rect(fill = NA),
+        panel.border = element_rect(fill = "transparent", colour = "black", size = bordersize),
+        panel.grid.major.x = element_line(colour = grid.x_colour, size = grid.x_size, linetype = grid.x_linetype),
+        panel.grid.major.y = element_line(colour = grid.y_colour, size = grid.y_size, linetype = grid.y_linetype),
+        panel.grid.minor = element_blank(),
+        panel.margin = unit(0.75, "lines"),
+        strip.background = element_blank(),
+        strip.text.x = element_text(family = base_family, size = base_size, face = "bold", colour = strip_text),
+        strip.text.y = element_text(family = base_family, size = base_size, face = "plain", angle = -90, colour = strip_text),
+        plot.background = element_rect(fill = NA, colour = NA),
+        plot.title = element_text(family = base_family, size = base_size * 1.1, vjust = 0.5, hjust = 0, face = "bold")) +
+    border
+}
+```
+
+
+<!-- BEGIN DOCUMENT -->
+
+<h1 style = "font-size: 28px; font-weight: 800; margin-bottom: 0px; padding-bottom:0px;">Measuring Political Ideology with Link-Sharing Data</h1>
+
+<h2 style = "font-size: 24px; font-weight: 700; margin-bottom: 0px; padding-bottom:0px; margin-top: 10px">The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library in R</h1>
+
+<h3 style = "font-size: 18px; font-weight: 500; margin-top: 30px">**[Gregory Eady](https://gregoryeady.com){target="_blank"}**, University of Copenhagen, Dept. of Political Science, **[https://gregoryeady.com](https://gregoryeady.com){target="_blank"}**</h3>
+
+<hr style = "margin-bottom: 0px; margin-top: 18px; border:1px; border-top: dotted 1px; color:#006400">
+
+
+# 1. Introduction {#section1}
+
+This document provides a brief introduction to the R library [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"}, the companion statistical software for the article "[News Sharing on Social Media: Mapping the Ideology of News Media, Politicians, and the Mass Public](https://gregoryeady.com/Papers/News_Sharing_on_Social_Media.pdf){target="_blank"}" [@Eady2024c]. The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library implements a statistical model for link-sharing sharing data on social media or analogous platforms. The goal of the method is to provide a measure of (1) the news-sharing ideology of politicians (e.g. members of Congress) and ordinary users on social media, and (2) the ideology of the media that they share online.
+
+The logic behind the method is intuitive andis based on a simple homophily assumption: that politicians and ordinary users will be more likely to share media that ideologicaally aligns with their own beliefs than they are media that they percieve as ideologically distant. In the US context, for example, social media users or politicians who are left-wing might be expected to share more content from, say, the New York Times or MSNBC than they are to share content from the Wall Street Journal or FOX News. Conversely, users or politicians who are right-wing might be expected to share more content from the Wall Street Journal and FOX News than they are from the New York Times or MSNBC.
+
+Below, we work through an application of the method to the news and commentary shared on Twitter by political actors in the United States. Our example demonstrates how researchers can use data of the links shared by users and politicians to estimate their news-sharing ideology (their "media score"), and jointly estimate the ideology of the news media organizations whose articles users and politicians share.
+
+
+# 2. Installation {#section2}
+
+The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library uses the Bayesian inference engine [Stan](http://mc-stan.org){target="_blank"} for estimation. [Stan](http://mc-stan.org){target="_blank"} is unfortunately a bit finicky to work with, especially if you want to parallelize estimation to speed up model fitting. Before installing the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, I suggest that you first manually install [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"} by (1) "Configuring C++ Toolchain", and (2) Installing [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"}, both of which are described [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}. After that, you can install the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library with the command devtools::github_install("https://github.com/SMAPPNYU/mediascores") (you may need to install the `devtools` library with `install.packages("devtools")` first).
+
+
+## 2.1 CPU parallelization {#subsection21}
+
+The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library is coded with map-reduce to enable within-chain CPU parallelization, which can  _substantially_ cut down on estimation time. At minimum, run `options(mc.cores = parallel::detectCores())` before fitting any models to ensure that all CPU cores are available. If you're able to get within-chain parallelization working in [RStan](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}, then it will work with the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library also, by including the argument `threads` in the call to the `mediascores()` workhorse function (e.g. `mediascores(..., threads = 12)`, making 12 threads available to parallelize, say, 4 chains).
+
+By example, when running the models in [@Eady2024c](https://gregoryeady.com/Papers/News_Sharing_on_Social_Media.pdf){target="_blank"} on the NYU HPC computing cluster, to enable within-chain parallelization, I needed to include the following in `~/.R/Makevars` file:
+
+```
+CXX14FLAGS = -DSTAN_THREADS -pthread
+CXX14FLAGS += -O3 -march=native -mtune=native
+CXX14FLAGS += -fPIC
+CXXFLAGS = -DSTAN_THREADS -pthread
+```
+
+And then, before loading the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, I ran the following commands in R:
+
+```
+# Expose all CPUs available for parallelization
+system(sprintf("taskset -p 0xffffffff %d", Sys.getpid()))
+    
+# Set the number of threads
+Sys.setenv("STAN_NUM_THREADS" = 48) # Enabling parallelization across 48 HPC CPUs
+```
+
+One does not need within-chain parallelization to use the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"}, however. But if the amount of data you have is large (thousands of rows of users), it may be useful to investigate. The [Stan user forums](https://discourse.mc-stan.org){target="_blank"} may be of help.
+
+
+# 3. Data {#section3}
+
+The model uses as data the number of news article that each social media user shares from a set of news media organizations pre-defined by a researcher. In this vignette, we use the articles shared by members of the 116^th^ US Congress, US governors, and members of the US executive (e.g. the President, VP, and their predecessors). The data come from the tweets and retweets of these politicians, which were collected using the Twitter API. I exclude links embedded within "quote tweets" because Twitter users often quote tweets to mock its content (which cuts against the homophily assumption). Because many links are provided only in shortened form, we unshorten them (e.g. [`nyti.ms/2BUTshD`](https://nyti.ms/2BUTshD){target="_blank"} to [`nytimes.com/2018/02/13/upshot/...`](https://www.nytimes.com/2018/02/13/upshot/fake-news-and-bots-may-be-worrisome-but-their-political-power-is-overblown.html){target="_blank"}).^[An example of a (parallelized) link unshortener is that developed by [Leon Yin](https://leonyin.org/){target="_blank"}: [`urlExpander`](https://github.com/SMAPPNYU/urlExpander){target="_blank"}.] The resulting data contain all links from tweets and retweets that contained links to national news media organizations. The list of national news media was created manually, as described in [@Eady2024c](https://gregoryeady.com/Papers/News_Sharing_on_Social_Media.pdf){target="_blank"}. For the complete list of news media organizations, see Appendix D of [@Eady2024c](https://gregoryeady.com/Papers/News_Sharing_on_Social_Media.pdf){target="_blank"}. To get a feel for the data, we describe them by example below.
+
+To begin, we read in the `data.frame` that contains the count of the stories from each news media domain that have been tweeted and retweeted by each politician. These data, which are included in the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, also contain basic identifying information about each actor:
+
+```{r, error=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(mediascores)
+
+# Read in the sharing data from politicians
+data(PolShares)
+```
+
+The identifying information is contained in the first 6 variables of the data as follows:
+
+* `name` e.g. "Nancy Pelosi"
+* `role` {"Senator", "House", "Governor", "Delegate", "Politician-Other", "Other"}
+* `nominate_name` e.g. "PELOSI, Nancy" (NOMINATE score identifier)
+* `party` {"Democrat", "Republican", "Independent"}
+* `affiliation` {"Democrat", "Republican"}
+* `group` {1 = Democrat, 2 = Republican}
+* `nominate` NOMINATE score of members of Congress (roll-call voting ideology)^[NOMINATE scores are the canonical measure of Members of Congress's ideology, based on their roll-call voting record [@Poole1985; @Poole2005]. NOMINATE data were downloaded from [VoteView](https://voteview.com){target="_blank"}.]
+
+The remaining columns represent the counts of the news stories tweeted or retweeted by each user from each news organization, where the column names indicate the organization. To make this concrete, a subset of five of these columns is shown alongside the names of six well-known US politicians:
+
+```{r}
+columns_to_show <- c("name", "thenation.com", "huffingtonpost.com",
+                     "washingtonpost.com", "foxnews.com", "breitbart.com")
+politicians_to_show <- c("Ted Cruz", "Mitch McConnell", "Susan Collins",
+                         "Joe Manchin", "Alexandria Ocasio-Cortez", "Bernie Sanders")
+print(PolShares[match(politicians_to_show, PolShares$name), columns_to_show], row.names = FALSE)
+```
+
+For observers of US politics, these data will appear as one might expect: Bernie Sanders---a relatively far left Senator---shares far more news from the left (e.g. thenation.com, huffingtonpost.com) than he does that from the right (e.g. foxnews.com, breitbart.com). By contrast, Ted Cruz---a relatively far right Senator---shares mostly news from the ideological right.
+
+As we can see, the data used for the model is a simple user-domain count matrix, where the rows indicate users/politicians; the columns indicate news media domains; and the cells represent the number of articles from each news domain that was shared by each user/politician.
+
+
+# 4. A Statistical Model of News Sharing {#section4}
+
+To model these data, the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library  fits the following (default) model:\begin{equation}
+y_{img} \sim \text{NegBin}(\pi_{img}, \omega_m)
+\end{equation}\begin{equation}
+\pi_{img} = \text{exp}(\alpha_i + \gamma_m - ||\theta_i - \zeta_m||^2),
+\end{equation}
+
+where $y_{img}$ denotes the count of news articles from news domain $m$ shared by user $i$ who belongs to group $g$ (e.g. $\{$Republican, Democrat$\}$); $\alpha_i$ denotes a user-specific intercept; $\gamma_m$ denotes a domain-specific intercept; and $\omega_m$ denote a user-specific dispersion parameter^[The model allows for the dispersion parameter to instead vary at the user level, i.e. $\omega_i$, but this specification is computationally burdensome and generally challenging to estimate without large numbers of data per user] The quantities of interest are denoted by $\theta_i$, which represents the news-sharing ideology of user $i$, and $\zeta_m$, the ideology of news media organization $m$. These two sets of quantities I refer to as "media scores". As the term $-||\theta_i - \zeta_m||^2$ in the linear predictor makes clear, the larger the ideological spatial distance between the ideology $\theta_i$ of the user and the ideology $\zeta_m$ of the news media organization, the less likely the user is to share stories from that news organization.
+
+The model is fit with the Bayesian inference engine [Stan](http://mc-stan.org){target="_blank"}. Priors are placed on the model parameters as follows: \begin{equation}
+\alpha_i \sim \text{Normal}(\mu_{\alpha}, \sigma_{\alpha})
+\end{equation}\begin{equation}
+\gamma_i \sim \text{Normal}(0, \sigma_{\gamma}).
+\end{equation}
+
+If desired, group-level information, $g$ (e.g. Democrat, Republican), is then incorporated by placing separate common prior distributions on the batches of parameters denoting users' ideology, $\theta_{ig}$, based on their group (party) affiliation: \begin{equation}
+\theta^{g}_{i} \sim \text{Normal}(\mu_{\theta}^{g}, \sigma_{\theta}^{g}).
+\end{equation}
+
+If group information is not included, all parameters $\theta_{i}$ are given a common prior distribution. Finally, the variance parameters $\omega_m$ are given common distributions $\omega_m \sim \text{InvGamma}(\omega_a, \omega_b)$.
+
+For identification, the parameters representing the ideology of news media organizations $\zeta_m$ are centered on zero: $\zeta_m \sim \text{Normal}(0, \sigma_{\zeta})$.^[Centering the distribution of $\zeta_m$ at 0 resolves the problem of "additive aliasing" caused by the fact that the likelihood is invariant to adding a constant to the parameters $\theta_{ig}$ and $\zeta_m$.] Lastly, for identification the direction of the model needs to be set, such that high values represent the ideological left or right^[This solves the issue of "reflection invariance", which refers to the fact that the likelihood is invariant to mulltiplyin the parameters $\theta_{ig}$ and $\zeta_m$ by -1.] Here, we follow the practical solution of @Jackman2001, who suggests allowing the sampler to freely explore the posterior and settle in on one of the two scale directions. We then flip the scale and associated parameters after estimation (if required) depending on anchors defined by the researcher: the researcher is asked to set two news media domains as scale anchors (e.g. \{nytimes.com, foxnews.com\}), such that the ideology of the first media organization defines the low end of the scale (in this example, left-wing), and the second, the high end (in this example, right-wing).
+
+
+# 5. Model Fitting {#section5}
+
+To fit this model, we use the data as shown in Section 2 (be sure that all rows (politicians/users) and columns (news media domains) have at least one non-zero observations). We first transform the `data.frame` into a matrix class in R, removing the columns that provide information about each politician (e.g. their name, party, and nominate score), which are the first 6 columns of the data set:
+
+```{r}
+# Create user-domain count matrix
+# (removes first 7 columns, which are user variables)
+User_Domain_Counts <- as.matrix(PolShares[, -1:-7])
+
+# For reference, name the rows by a political actor's name
+rownames(User_Domain_Counts) <- PolShares$name
+
+# Show sub-matrix of first 5 politicians and 5 domains:
+print(User_Domain_Counts[1:5, 1:5], row.names = FALSE)
+```
+
+The resulting user-domain count matrix can then be inputted as an argument into the workhorse function of the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, `mediascores()`, as follows:
+
+```{r eval = FALSE}
+# Fit the sharing ideology model
+# anchor = c(1, 2) because column 1 in the matrix represents the NY Times
+# and column 2 Fox News. As a result lower values of theta_i and zeta_m will
+# represent the liberal side of the scale; higher values, the conservative side.
+fitted_model <- mediascores(Y = User_Domain_Counts,
+                            group = PolShares$group, # if want group-level prior
+                            chains = 4, cores = 4, threads = 4,
+                            warmup = 750, iter = 1500,
+                            seed = 1, # random seed for replication
+                            open_progress = TRUE,
+                            anchors = c(1, 2)) # first 2 cols, NYT & FOX News
+```
+
+```{r echo = FALSE, eval = FALSE}
+# Fit the sharing ideology model
+# anchor = c(1, 2) because column 1 in the matrix represents the NY Times
+# and column 2 Fox News. As a result lower values of theta_i and zeta_m will
+# represent the liberal side of the scale; higher values, the conservative side.
+system.time({fitted_model <- mediascores(Y = User_Domain_Counts,
+                                         group = PolShares$group, # if want group-level prior
+                                         chains = 4, cores = 4, threads = 4,
+                                         warmup = 750, iter = 1500,
+                                         seed = 1, # random seed for replication
+                                         open_progress = TRUE,
+                                         anchors = c(1, 2))})
+# saveRDS(fitted_model, "data/fitted_models/PolShares_fitted_model.rds")
+```
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = TRUE}
+# This is a _local_ file for the vignette only
+fitted_model <- readRDS("~/Downloads/mediascores/data/fitted_models/PolShares_fitted_model.rds")
+```
+
+As we can see, we also include the `PolShares$group` variable to set separate common distributions on the ideology parameters $\theta_i$ of Democrats (`group = 1`) and Republicans (`group = 2`). One could alternatively exclude this information, in which a common prior distribution is assigned to all actors included in the model regardless of party affiliation.
+
+
+
+# 6. Model Diagnostics {#section6}
+
+Here, we focus on a simple helper function built into the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library to access one of the key post-estimation statistics, $\hat{R}$, which is commonly used to assess parameter convergence. Because the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} returns a Stan object, any typical Stan diagnostics can be used. Below, we use the `rhat()` function to display the $\hat{R}$ statistic for the two primary quantities of interest, $\theta_i$ (the media score of users), and $\zeta_m$ (the media score news media organizations):
+
+```{r eval = FALSE}
+rhats <- rhat(posterior = fitted_model, pars = c("zeta", "theta"))
+print(rhats)
+``` 
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = TRUE}
+rhats <- rhat(posterior = fitted_model, pars = c("theta", "zeta"))
+{print(subset(rhats, rownames(rhats) %in% c("zeta[1]", "zeta[2]", "zeta[3]", "zeta[4]", "zeta[5]")))
+cat("...\n")
+print(subset(rhats, rownames(rhats) %in% paste0("theta[", (nrow(User_Domain_Counts)-4):nrow(User_Domain_Counts), "]")))}
+```
+
+The function outputs $\hat{R}$ statistics for all specified parameters, including a warning for any values of $\hat{R}$ that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. To see if any such $\hat{R}$ statistics are greater than 1.1 subset them as follows (looking here at the first 5):
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = TRUE}
+rhats %>% filter(rhat > 1.1) %>% slice_head(n = 5)
+```
+
+Here, we see that a number of the specified parameters have $\hat{R}$ statistics greater than 1.1. In this case, we would typically want to re-run the model with more post-warmup iterations:
+
+```{r eval = FALSE}
+# Setting iter = 3000 (not run)
+fitted_model <- mediascores(Y = User_Domain_Counts, group = PolShares$group,
+                            variational = FALSE, user_variance = FALSE,
+                            warmup = 750, iter = 3000, chains = 4,
+                            open_progress = TRUE, seed = 1,
+                            anchors = c(1, 2))
+```
+
+For more detail on $\hat{R}$, see the Stan Modeling Language [User Guide and Reference Manual](https://mc-stan.org/users/documentation/){target="_blank"}.
+
+Anecdotally, in practice the results from [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} models with R-hat values somewhat above 1.05 do not change the resulting estimates.
+
+
+## 6.1 Divergent transitions {#subsection61}
+
+After model fitting, if you receive a message that there were "divergent transitions" during estimation, there may be validity concerns about the resulting parameter estimates. Details of this issue lie outside the purview of this vignette, but the problem can often be resolved by increasing the value of the argument `adapt_delta`. This argument can be included in the call to `mediascores()` as follows: `mediascores(..., control = list(adapt_delta = 0.99))`, where the default value is 0.8 (max < 1). Values of 0.99 or 0.999 typically resolve the problem. However, the drawback is that increasing the value of `adapt_delta` can substantially increase the time for model fitting. Anecdotally, this problem has rarely occurred when fitting this the default model in this library.
+
+
+## 6.2 Maximum treedepth exceeded {#subsection62}
+
+If after model fitting you receive a message that the "maximum treedepth" was exceeded during estimation, the concern is one of efficiency not validity. If desired, you can increase efficiency by increasing the value of the `max_treedepth` argument, which defaults to 10. As with `adapt_delta`, this argument can be included in the function call as follows: `mediascores(..., control = list(max_treedepth = 15))`. As with `adapt_delta`, increasing `max_treedepth` increases the time to a fit a model
+
+
+# 7. Analysis {#section7}
+
+Finally, we examine the estimates of our quantities of interest: (1) the media scores of members of Congress, and (2) the media scores of the news media organizations.
+
+To calculate media scores from the fitted model object, we can use the `point_est()` function, which calculates the median of the posterior for each parameter alongside credible intervals:
+
+```{r eval = FALSE}
+theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
+print(theta_hat)
+```
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r echo = FALSE, eval = TRUE}
+theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
+{print(subset(theta_hat, rownames(theta_hat) %in% c("theta[1]", "theta[2]", "theta[3]", "theta[4]", "theta[5]")))
+cat("...\n")
+print(subset(theta_hat, rownames(theta_hat) %in% paste0("theta[", (nrow(User_Domain_Counts)-4):nrow(User_Domain_Counts), "]")))}
+```
+
+Because these data are ordered as they are in our original data, we can merge them into our `PolShares` dataset to see how the media scores align with NOMINATE scores (i.e. roll-call voting ideology):
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = TRUE, warning=FALSE, message=FALSE}
+PolShares$theta_hat <- theta_hat[, "median"]
+
+# Correlation between media score and nominate score (all politicians)
+round(cor(PolShares$theta_hat, PolShares$nominate, use = "complete.obs"), 2)
+
+# Correlation between media score and nominate score (by party and chamber)
+PolShares %>%
+  filter(role %in% c("House", "Senate")) %>%
+  group_by(affiliation, role) %>%
+  summarize(cor = round(cor(theta_hat, nominate, use = "complete.obs"), 2))
+```
+
+We can further graph these estimates as follows:
+
+```{r, eval = FALSE}
+ggplot(subset(PolShares, role %in% c("Senate", "House")),
+       aes(x = theta_hat, y = nominate, color = affiliation,
+           fill = affiliation, shape = affiliation)) +
+  facet_wrap(~ role) +
+  labs(x = expression(bold(paste("Media score (", theta, ")"))),
+       y = "DW-NOMINATE") +
+  coord_cartesian(xlim = c(-1.1, 1.7), ylim = c(-1.1, 1.1), expand = FALSE) +
+  geom_point(size = 2.25, shape = 21, stroke = 0.4) +
+  scale_colour_manual(values = c("Republican" = "red", "Democrat" = "blue")) +
+  scale_fill_manual(values = c("Republican" = "transparent", "Democrat" = "transparent")) +
+  theme(legend.position = "none")
+```
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, echo = FALSE, out.width = "100%", fig.height = 4, warning = FALSE, eval = TRUE}
+ggplot(subset(PolShares, role %in% c("Senate", "House")),
+       aes(x = theta_hat, y = nominate, color = affiliation,
+           fill = affiliation, shape = affiliation)) +
+  my.theme(base_size = 11, borderless = 2,
+           remove.ticks.x = TRUE, remove.ticks.y = TRUE,
+           grid.x_colour = "grey85", grid.y_colour = "grey85",
+           grid.x_linetype = 1, grid.y_linetype = 1) +
+  facet_wrap(~ role) +
+  labs(x = expression(bold(paste("Media score (", theta, ")"))),
+       y = "DW-NOMINATE") +
+  coord_cartesian(xlim = c(-1.1, 1.7), ylim = c(-1.1, 1.1), expand = FALSE) +
+  geom_point(size = 2.5, shape = 21, stroke = 0.4) +
+  scale_colour_manual(values = c("Republican" = "red", "Democrat" = "blue")) +
+  scale_fill_manual(values = c("Republican" = "transparent", "Democrat" = "transparent")) +
+  theme(legend.position = "none")
+```
+
+We can then calculate media scores for the news media organizations as follows:
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, eval = TRUE}
+zeta_hat <- point_est(fitted_model, "zeta", prob = 0.9)
+
+# Collect the estimates of news media ideology in a data.frame
+M <- data.frame(media_org = colnames(PolShares)[8:(ncol(PolShares)-1)],
+                zeta_hat = zeta_hat[, "median"],
+                zeta_hat_5 = zeta_hat[, "5%"],
+                zeta_hat_95 = zeta_hat[, "95%"])
+
+# Re-order media_org for plotting from low values of zeta to high
+M$media_org <- reorder(M$media_org, -M$zeta_hat)
+```
+
+Lastly, we graph these estimates along with their 90% credible intervals:
+
+```{r, eval = FALSE}
+M$label <- "right"
+M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
+
+ggplot(M, aes(x = zeta_hat, y = media_org)) +
+  coord_cartesian(xlim = c(-3.4, 3.4)) +
+  scale_y_discrete(breaks = c()) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "", x = expression(bold(paste("Media score (", zeta, ")")))) +
+  geom_segment(aes(x = zeta_hat_5, xend = zeta_hat_95, y = media_org, yend = media_org),
+                   size = 0.25, color = "black") +
+  geom_point(size = 1.25, shape = 21, stroke = 0.4, color = "black",
+             fill = "black", shape = 21) +
+  geom_label(data = subset(M, label == "left"),
+             aes(x = zeta_hat_5, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 1, size = 2.5, nudge_x = -0.13) +
+  geom_label(data = subset(M, label == "right"),
+             aes(x = zeta_hat_95, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 0, size = 2.5, nudge_x = 0.13)
+```
+
+
+<!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
+```{r, echo = FALSE, fig.height = 18, out.width = "100%", warning = FALSE, eval = TRUE}
+M$label <- "right"
+M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
+
+ggplot(M, aes(x = zeta_hat, y = media_org)) +
+  my.theme(base_size = 11, borderless = 2,
+           remove.ticks.x = TRUE,
+           grid.x_linetype = 1, grid.x_colour = "grey85") +
+  coord_cartesian(xlim = c(-3.4, 3.4)) +
+  scale_y_discrete(breaks = c()) +
+  scale_x_continuous(breaks = -3:3) +
+  labs(y = "", x = expression(bold(paste("Media score (", zeta, ")")))) +
+  geom_segment(aes(x = zeta_hat_5, xend = zeta_hat_95, y = media_org, yend = media_org),
+                   size = 0.25, color = "black") +
+  geom_point(size = 1.25, shape = 21, stroke = 0.4, color = "black",
+             fill = "black") +
+  geom_label(data = subset(M, label == "left"),
+             aes(x = zeta_hat_5, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 1, size = 2.5, nudge_x = -0.13) +
+  geom_label(data = subset(M, label == "right"),
+             aes(x = zeta_hat_95, label = media_org), color = "black",
+             label.r = unit(0, "lines"), label.size = NA,
+             label.padding = unit(0.07, "lines"), 
+             hjust = 0, size = 2.5, nudge_x = 0.13)
+```
+
+
+
+# References
+<hr style = "margin-bottom: 22px; margin-top: 12px; border:1px; border-top: dotted 1px; color:#006400">
+
