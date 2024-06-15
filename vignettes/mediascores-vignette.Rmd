@@ -371,11 +371,11 @@ system.time({fitted_model <- mediascores(Y = User_Domain_Counts,
                                          seed = 0, # random seed for replication
                                          open_progress = TRUE,
                                          anchors = c(1, 2))})
-# saveRDS(fitted_model, "data/fitted_models/PolShares_fitted_model.rds")
+# saveRDS(fitted_model, "~/Github/mediascores/data/fitted_models/PolShares_fitted_model.rds")
 ```
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r echo = FALSE, eval = TRUE}
+```{r echo = FALSE, eval = FALSE}
 # This is a _local_ file for the vignette only
 fitted_model <- readRDS("~/Github/mediascores/data/fitted_models/PolShares_fitted_model.rds")
 ```
@@ -394,7 +394,7 @@ print(rhats)
 ``` 
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r echo = FALSE, eval = TRUE}
+```{r echo = FALSE, eval = FALSE}
 rhats <- rhat(posterior = fitted_model, pars = c("theta", "zeta"))
 {print(subset(rhats, rownames(rhats) %in% c("zeta[1]", "zeta[2]", "zeta[3]", "zeta[4]", "zeta[5]")))
 cat("...\n")
@@ -404,11 +404,11 @@ print(subset(rhats, rownames(rhats) %in% paste0("theta[", (nrow(User_Domain_Coun
 The function outputs $\hat{R}$ statistics for all specified parameters, including a warning for any values of $\hat{R}$ that are greater than 1.1, the rule-of-thumb cutoff suggested by @Gelman2014. To see if any such $\hat{R}$ statistics are greater than 1.1 subset them as follows (looking here at the first 5):
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r, eval = TRUE}
-rhats %>% filter(rhat > 1.1) %>% slice_head(n = 5)
+```{r, eval = FALSE}
+rhats %>% filter(rhat > 1.1)
 ```
 
-Here, we see that a number of the specified parameters have $\hat{R}$ statistics greater than 1.1. In this case, we would typically want to re-run the model with more post-warmup iterations:
+Here, we see no parameters with $\hat{R}$ statistics greater than 1.1. If we did, we would typically want to re-run the model with more post-warmup iterations:
 
 ```{r eval = FALSE}
 # Setting iter = 3000 (not run)
@@ -446,7 +446,7 @@ print(theta_hat)
 ```
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r echo = FALSE, eval = TRUE}
+```{r echo = FALSE, eval = FALSE}
 theta_hat <- point_est(fitted_model, pars = c("theta"), prob = 0.9)
 {print(subset(theta_hat, rownames(theta_hat) %in% c("theta[1]", "theta[2]", "theta[3]", "theta[4]", "theta[5]")))
 cat("...\n")
@@ -456,7 +456,7 @@ print(subset(theta_hat, rownames(theta_hat) %in% paste0("theta[", (nrow(User_Dom
 Because these data are ordered as they are in our original data, we can merge them into our `PolShares` dataset to see how the media scores align with NOMINATE scores (i.e. roll-call voting ideology):
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r, eval = TRUE, warning=FALSE, message=FALSE}
+```{r, warning = FALSE, message = FALSE, eval = FALSE}
 PolShares$theta_hat <- theta_hat[, "median"]
 
 # Correlation between media score and nominate score (all politicians)
@@ -486,7 +486,7 @@ ggplot(subset(PolShares, role %in% c("Senate", "House")),
 ```
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r, echo = FALSE, out.width = "100%", fig.height = 4, warning = FALSE, eval = TRUE}
+```{r, echo = FALSE, out.width = "100%", fig.height = 4, warning = FALSE, eval = FALSE}
 ggplot(subset(PolShares, role %in% c("Senate", "House")),
        aes(x = theta_hat, y = nominate, color = affiliation,
            fill = affiliation, shape = affiliation)) +
@@ -507,7 +507,7 @@ ggplot(subset(PolShares, role %in% c("Senate", "House")),
 We can then calculate media scores for the news media organizations as follows:
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 zeta_hat <- point_est(fitted_model, "zeta", prob = 0.9)
 
 # Collect the estimates of news media ideology in a data.frame
@@ -549,7 +549,7 @@ ggplot(M, aes(x = zeta_hat, y = media_org)) +
 
 
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
-```{r, echo = FALSE, fig.height = 18, out.width = "100%", warning = FALSE, eval = TRUE}
+```{r, echo = FALSE, fig.height = 18, out.width = "100%", warning = FALSE, eval = FALSE}
 M$label <- "right"
 M$label[M$zeta_hat > median(M$zeta_hat)] <- "left"
 
