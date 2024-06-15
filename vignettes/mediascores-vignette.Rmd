@@ -174,7 +174,6 @@ my.theme <- function(base_size = 10, base_family = "",
   else if(borderless == 1) {
     border <- theme(axis.line = element_line(colour = "black", size = 0.25),
                     panel.border = element_blank(),
-                    # panel.background = element_blank(),
                     strip.background = element_blank())
   }
   else if(borderless == 0) border <- theme()
@@ -234,12 +233,12 @@ Below, we work through an application of the method to the news and commentary s
 
 # 2. Installation {#section2}
 
-The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library uses the Bayesian inference engine [Stan](http://mc-stan.org){target="_blank"} for estimation. [Stan](http://mc-stan.org){target="_blank"} is unfortunately a bit finicky to work with, especially if you want to parallelize estimation to speed up model fitting. Before installing the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, I suggest that you first manually install [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"} by (1) "Configuring C++ Toolchain", and (2) Installing [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"}, both of which are described [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}. After that, you can install the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library with the command devtools::github_install("https://github.com/SMAPPNYU/mediascores") (you may need to install the `devtools` library with `install.packages("devtools")` first).
+The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library uses the Bayesian inference engine [Stan](http://mc-stan.org){target="_blank"} for estimation. [Stan](http://mc-stan.org){target="_blank"} is unfortunately a bit finicky to work with, especially if you want to parallelize estimation to speed up model fitting. Before installing the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library, I suggest that you first manually install [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"} by (1) "Configuring C++ Toolchain", and (2) Installing [RStan](https://mc-stan.org/users/interfaces/rstan){target="_blank"}, both of which are described [here](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}. After that, you can install the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library with the command `devtools::github_install("https://github.com/SMAPPNYU/mediascores")` (you may need to install the `devtools` library with `install.packages("devtools")` first).
 
 
 ## 2.1 CPU parallelization {#subsection21}
 
-The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library is coded with map-reduce to enable within-chain CPU parallelization, which can  _substantially_ cut down on estimation time. At minimum, run `options(mc.cores = parallel::detectCores())` before fitting any models to ensure that all CPU cores are available. If you're able to get within-chain parallelization working in [RStan](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}, then it will work with the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library also, by including the argument `threads` in the call to the `mediascores()` workhorse function (e.g. `mediascores(..., threads = 12)`, making 12 threads available to parallelize, say, 4 chains).
+The [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library is coded with map-reduce to enable within-chain CPU parallelization, which can _substantially_ cut down on estimation time. At minimum, run `options(mc.cores = parallel::detectCores())` before fitting any models to ensure that all CPU cores are available. If you're able to get within-chain parallelization working in [RStan](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started){target="_blank"}, then it will work with the [mediascores](https://github.com/SMAPPNYU/mediascores){target="_blank"} library also, by including the argument `threads` in the call to the `mediascores()` workhorse function (e.g. `mediascores(..., threads = 12)`, making 12 threads available to parallelize, say, 4 chains).
 
 By example, when running the models in [@Eady2024c](https://gregoryeady.com/Papers/News_Sharing_on_Social_Media.pdf){target="_blank"} on the NYU HPC computing cluster, to enable within-chain parallelization, I needed to include the following in `~/.R/Makevars` file:
 
@@ -351,10 +350,11 @@ The resulting user-domain count matrix can then be inputted as an argument into 
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
 fitted_model <- mediascores(Y = User_Domain_Counts,
-                            group = PolShares$group, # if want group-level prior
+                            # if want group-level prior, and must line up with
+                            # the rows of the user-domain count matrix
+                            group = PolShares$group,
                             chains = 4, cores = 4, threads = 4,
-                            warmup = 750, iter = 1500,
-                            seed = 1, # random seed for replication
+                            warmup = 750, iter = 2000,
                             open_progress = TRUE,
                             anchors = c(1, 2)) # first 2 cols, NYT & FOX News
 ```
@@ -365,10 +365,10 @@ fitted_model <- mediascores(Y = User_Domain_Counts,
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
 system.time({fitted_model <- mediascores(Y = User_Domain_Counts,
-                                         group = PolShares$group, # if want group-level prior
+                                         group = PolShares$group,
                                          chains = 4, cores = 4, threads = 4,
-                                         warmup = 750, iter = 1500,
-                                         seed = 1, # random seed for replication
+                                         warmup = 750, iter = 2000,
+                                         seed = 0, # random seed for replication
                                          open_progress = TRUE,
                                          anchors = c(1, 2))})
 # saveRDS(fitted_model, "data/fitted_models/PolShares_fitted_model.rds")
@@ -377,7 +377,7 @@ system.time({fitted_model <- mediascores(Y = User_Domain_Counts,
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
 ```{r echo = FALSE, eval = TRUE}
 # This is a _local_ file for the vignette only
-fitted_model <- readRDS("~/Downloads/mediascores/data/fitted_models/PolShares_fitted_model.rds")
+fitted_model <- readRDS("~/Github/mediascores/data/fitted_models/PolShares_fitted_model.rds")
 ```
 
 As we can see, we also include the `PolShares$group` variable to set separate common distributions on the ideology parameters $\theta_i$ of Democrats (`group = 1`) and Republicans (`group = 2`). One could alternatively exclude this information, in which a common prior distribution is assigned to all actors included in the model regardless of party affiliation.

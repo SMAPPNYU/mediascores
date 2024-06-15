@@ -622,8 +622,8 @@ parallelize estimation to speed up model fitting. Before installing the
 <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library, I suggest that you first
 manually install <a href="https://mc-stan.org/users/interfaces/rstan" target="_blank">RStan</a> by (1) “Configuring C++ Toolchain”, and (2)
 Installing <a href="https://mc-stan.org/users/interfaces/rstan" target="_blank">RStan</a>, both of which are described <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started" target="_blank">here</a>. After that, you can install the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library with the command
-devtools::github_install(“<a href="https://github.com/SMAPPNYU/mediascores" class="uri">https://github.com/SMAPPNYU/mediascores</a>”) (you may need
-to install the <code>devtools</code> library with
+<code>devtools::github_install(&quot;https://github.com/SMAPPNYU/mediascores&quot;)</code>
+(you may need to install the <code>devtools</code> library with
 <code>install.packages(&quot;devtools&quot;)</code> first).</p>
 <div id="subsection21" class="section level2">
 <h2>2.1 CPU parallelization</h2>
@@ -819,10 +819,11 @@ follows:</p>
 # and column 2 Fox News. As a result lower values of theta_i and zeta_m will
 # represent the liberal side of the scale; higher values, the conservative side.
 fitted_model &lt;- mediascores(Y = User_Domain_Counts,
-                            group = PolShares$group, # if want group-level prior
+                            # if want group-level prior, and must line up with
+                            # the rows of the user-domain count matrix
+                            group = PolShares$group,
                             chains = 4, cores = 4, threads = 4,
-                            warmup = 750, iter = 1500,
-                            seed = 1, # random seed for replication
+                            warmup = 750, iter = 2000,
                             open_progress = TRUE,
                             anchors = c(1, 2)) # first 2 cols, NYT &amp; FOX News</code></pre>
 <!-- SET TO EVAL = TRUE TO BUILD VIGNETTE -->
