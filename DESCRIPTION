@@ -1,38 +1,28 @@
 Package: mediascores
-Title: News-sharing Ideology from Social Media Link Data
-Version: 0.0.0.9000
-Authors@R: c(person("Gregory", "Eady", email = "gregory.eady@gmail.com",
-                  role = c("aut", "cre")),
-             person("Fridolin", "Linder", role = c("aut", "ctb")))
-Date: 2019-03-01
-URL: https://cran.r-project.org/web/packages/mediascores/index.html
-Description: Enables the examination of political communication on social media by using news stories shared on social media (via URLs) to estimate the news-sharing ideology of politicians and users, and the ideology of the content that they share.
+Title: Political Ideology from Online Link-Sharing Data
+Version: 0.0.0.9001
+Authors@R: 
+    person("Gregory", "Eady", , "gregory.eady@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0184-0055"))
+Description: Estimates the political ideology of politicians, users, and the media that they share based on politicians' and users' link-sharing behavior.
 License: MIT + file LICENSE
-Depends: 
-    methods,
-    R (>= 3.4.0),
-    Rcpp (>= 1.0.0)
-Imports: 
-    rstan (>= 2.18.2),
-    rstantools (>= 1.5.1),
-    invgamma,
-    MASS,
-    stats,
-    checkmate
-LinkingTo: 
-    BH (>= 1.69.0-1),
-    Rcpp (>= 1.0.0),
-    RcppEigen (>= 0.3.3.5.0),
-    rstan (>= 2.18.2),
-    StanHeaders (>= 2.18.1)
 Encoding: UTF-8
-LazyData: true
-NeedsCompilation: yes
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Biarch: true
+Depends: 
+    R (>= 3.4.0)
+Imports: 
+    methods,
+    Rcpp (>= 0.12.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.18.1),
+    rstantools (>= 2.4.0)
+LinkingTo: 
+    BH (>= 1.66.0),
+    Rcpp (>= 0.12.0),
+    RcppEigen (>= 0.3.3.3.0),
+    RcppParallel (>= 5.0.1),
+    rstan (>= 2.18.1),
+    StanHeaders (>= 2.18.0)
 SystemRequirements: GNU make
-RoxygenNote: 6.1.1
-Suggests: 
-    testthat,
-    knitr,
-    rmarkdown,
-    ggplot2
-VignetteBuilder: knitr

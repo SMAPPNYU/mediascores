@@ -4,20 +4,30 @@
 \alias{mediascores}
 \title{Estimate the mediascores model}
 \usage{
-mediascores(Y, group = NULL, anchors, user_variance = FALSE,
-  variational = FALSE, chains = 4, cores = getOption("mc.cores", 1L),
-  threads = cores, iter = 2000, warmup = floor(iter/2),
-  refresh = 50, ...)
+mediascores(
+  Y,
+  group = NULL,
+  anchors,
+  user_variance = FALSE,
+  variational = FALSE,
+  chains = 4,
+  cores = getOption("mc.cores", 1L),
+  threads = cores,
+  iter = 2000,
+  warmup = floor(iter/2),
+  refresh = 50,
+  ...
+)
 }
 \arguments{
 \item{Y}{matrix or dataframe of dimension \code{n_users x n_domains}
 containing counts of the frequency with which each user (row) shares a
 given URL domain (column). No missing data are permitted.}
 
-\item{group}{vector of length \code{n_users} indicating group membership of 
+\item{group}{vector of length \code{n_users} indicating group membership of
 each user. If \code{NULL}, every user is assigned to the same group.}
 
-\item{anchors}{vector of length 2 indicating the index/column position of the 
+\item{anchors}{vector of length 2 indicating the index/column position of the
 anchor domains. The first index defines the meaning of lower values of
 the scale; the second, upper values. For example, setting the first
 value to indicate the column representing the New York Times and the

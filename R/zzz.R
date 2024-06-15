@@ -1,10 +1,9 @@
 .onLoad <- function(libname, pkgname) {
 
     packageStartupMessage('
-mediascores: News-sharing Ideology from Social Media Link Data.
-Version 0.0.1.9000 (Development Version)
-copyright (c) 2019, Gregory Eady, New York University
-                    Fridolin Linder, New York University
+mediascores: News-sharing Ideology from Online Link-Sharing Data.
+Version 0.0.1.9001 (Development Version)
+copyright (c) 2024, Gregory Eady, University of Copenhagen
 For citation information, type citation("mediascores").')
 
     # To add new .stan files, first restart R then uncomment below and

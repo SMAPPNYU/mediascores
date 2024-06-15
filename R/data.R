@@ -1,20 +1,22 @@
-#' News Media Domains Tweeted by Members of the 115th US Congress and
-#' other politicians
+#' News Media Domains Tweeted by members of the 116th US Congress and
+#' other political actors (2016-2021)
 #'
-#' @description The counts of news media stories (URL domains) tweeted or
-#' retweeted by Members of the 115th US Congress and other political actors.
+#' @description The counts of news media links tweeted or
+#' retweeted by members of the 116th US Congress and other political actors.
 #'
 #' \describe{
-#'   \item{name}{name of politician (or organization)}
-#'   \item{nominate_name}{name of Members of Congress as specified by \url{voteview.com}}
-#'   \item{party}{political party of politician (or organization)}
-#'   \item{group}{integer party ID of politician (or organization) \{1 = Democrat, 2 = Republican\}}
-#'   \item{role}{political role of politician (or organization) \{Senate, House, Governor, Delegate, Other\}}
-#'   \item{remaining variables}{remaining variables indicate the count for each news domain shared by each political actor}
+#'   \item{name}{name of politician or political actors}
+#'   \item{role}{political role of politician (or organization) \{"House", "Senate", "Governor", "Politician-Other", "Delegate", "Other"\}}
+#'   \item{nominate_name}{name of members of Congress as specified by \url{voteview.com}}
+#'   \item{party}{political party of a politician (or organization) \{"Democrat", "Republican", "Independent"\}}
+#'   \item{affiliation}{political party a politician (or organization) is affiliated with \{"Democrat", "Republican"\}}
+#'   \item{group}{Democrat = 1, Republican = 2}
+#'   \item{nominate}{Nominate score of members of Congress (\url{voteview.com})}
+#'   \item{remaining variables}{remaining variables indicate the count for news shared to each news media domain}
 #' }
 #' 
 #' @docType data
-#' @name MOC115
-#' @usage data(MOC115)
-#' @format A data frame with 590 rows and 151 variables
+#' @name PolShares
+#' @usage data(PolShares)
+#' @format A data frame with 641 rows and 190 variables
 NULL

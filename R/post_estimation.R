@@ -65,15 +65,15 @@ check_parameters <- function(posterior, pars) {
 #' posterior <- mediascores(Y = simulated_data$Y, group = simulated_data$group,
 #'                          anchors = simulated_data$anchors,
 #'                          variational = FALSE, chains = 1, iter = 500)
-#' point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.90)
+#' point_est(posterior, pars = c("theta", "theta_mu"), prob = 0.9)
 #' }
 #' @export
-point_est <- function(posterior, pars = NULL, prob = 0.90) {
-  qassert(prob, 'R1[0,1]')
+point_est <- function(posterior, pars = NULL, prob = 0.9) {
+  stopifnot(prob > 0 & prob < 1)
   keep_pars <- check_parameters(posterior, pars)
 
   X <- as.matrix(posterior)[, keep_pars]
-  if(class(X) != "matrix") X <- matrix(X, dimnames = list(NULL, keep_pars))
+  if(all(class(X) != "matrix")) X <- matrix(X, dimnames = list(NULL, keep_pars))
   alpha <- (1 - prob) / 2
   probs <- c(alpha, 1 - alpha)
   labels <- c("median", paste0(100 * probs, "%"))
@@ -143,7 +143,4 @@ rhat <- function(posterior, pars = NULL) {
 
   return(out)
 }
-
-
-
 
