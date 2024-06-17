@@ -614,17 +614,21 @@ media organizations whose articles users and politicians share.</p>
 </div>
 <div id="section2" class="section level1">
 <h1>2. Installation</h1>
+<p>To compile R packages from source, one needs to have <a href="https://cran.r-project.org/bin/windows/Rtools/" target="_blank">RTools</a> (on Windows) or <a href="https://mac.r-project.org/tools/" target="_blank">Xtools</a> (on
+Mac) installed. If you are on a Windows or Mac, and these tools are not
+installed, please install them first.</p>
 <p>The <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library uses the Bayesian inference
 engine <a href="http://mc-stan.org" target="_blank">Stan</a> for
-estimation. <a href="http://mc-stan.org" target="_blank">Stan</a> is
-unfortunately a bit finicky to work with, especially if you want to
-parallelize estimation to speed up model fitting. Before installing the
-<a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library, I suggest that you first
+estimation. Before installing the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library, I thus suggest that you first
 manually install <a href="https://mc-stan.org/users/interfaces/rstan" target="_blank">RStan</a> by (1) “Configuring C++ Toolchain”, and (2)
-Installing <a href="https://mc-stan.org/users/interfaces/rstan" target="_blank">RStan</a>, both of which are described <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started" target="_blank">here</a>. After that, you can install the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library with the command
-<code>devtools::github_install(&quot;https://github.com/SMAPPNYU/mediascores&quot;)</code>
-(you may need to install the <code>devtools</code> library with
-<code>install.packages(&quot;devtools&quot;)</code> first).</p>
+Installing <a href="https://mc-stan.org/users/interfaces/rstan" target="_blank">RStan</a>, both of which are described <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started" target="_blank">here</a>.</p>
+<p>To install the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library from R, be sure that the R
+library <code>devtools</code> is already installed, or update/install it
+in R with <code>install.packages(&quot;devtools&quot;)</code>. One can then
+install the <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library with the command
+<code>devtools::github_install(&quot;https://github.com/SMAPPNYU/mediascores&quot;)</code>.
+On Windows, installation may also only work if you are in “Admin”
+mode.</p>
 <div id="subsection21" class="section level2">
 <h2>2.1 CPU parallelization</h2>
 <p>The <a href="https://github.com/SMAPPNYU/mediascores" target="_blank">mediascores</a> library is coded with map-reduce to
